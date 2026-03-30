@@ -148,3 +148,99 @@ def plot_solution(t, y, labels=None, title="ODE Solution", figsize=(10, 6)):
     ax.grid(True, alpha=0.3)
     
     return fig, ax
+
+
+def compare_models(y_true, y_classical, y_neural):
+    """
+    Compare classical solver and Neural ODE predictions.
+
+    Parameters
+    ----------
+    y_true : ndarray
+        True trajectory (shape: n_points, n_dims)
+    y_classical : ndarray
+        Classical solver prediction (shape: n_points, n_dims)
+    y_neural : ndarray
+        Neural ODE prediction (shape: n_points, n_dims)
+
+    Returns
+    -------
+    metrics : dict
+        Dictionary containing MSE and RMSE for both models,
+        plus improvement percentage.
+    """
+    classical_mse = np.mean((y_true - y_classical) ** 2)
+    neural_mse = np.mean((y_true - y_neural) ** 2)
+
+    classical_rmse = np.sqrt(classical_mse)
+    neural_rmse = np.sqrt(neural_mse)
+
+    if classical_mse > 0:
+        improvement = ((classical_mse - neural_mse) / classical_mse) * 100.0
+    else:
+        improvement = 0.0
+
+    print(f"Classical MSE: {classical_mse:.6f}")
+    print(f"Neural ODE MSE: {neural_mse:.6f}")
+    print(f"Improvement (%): {improvement:.2f}")
+
+    return {
+        "classical_mse": classical_mse,
+        "neural_mse": neural_mse,
+        "classical_rmse": classical_rmse,
+        "neural_rmse": neural_rmse,
+        "improvement_percent": improvement,
+    }
+
+
+def plot_model_comparison(t, y_true, y_classical, y_neural, figsize=(12, 9)):
+    """
+    Plot true, classical, and neural trajectories for x, y, z dimensions.
+
+    Parameters
+    ----------
+    t : ndarray
+        Time points (shape: n_points)
+    y_true : ndarray
+        True trajectory (shape: n_points, 3)
+    y_classical : ndarray
+        Classical solver prediction (shape: n_points, 3)
+    y_neural : ndarray
+        Neural ODE prediction (shape: n_points, 3)
+    figsize : tuple
+        Figure size (default: (12, 9))
+
+    Returns
+    -------
+    fig, axes : matplotlib figure and axes
+    """
+    y_true = np.asarray(y_true)
+    y_classical = np.asarray(y_classical)
+    y_neural = np.asarray(y_neural)
+
+    if y_true.shape != y_classical.shape or y_true.shape != y_neural.shape:
+        raise ValueError("y_true, y_classical, and y_neural must have the same shape")
+
+    if y_true.ndim != 2 or y_true.shape[1] != 3:
+        raise ValueError("Expected input shape (n_points, 3) for x, y, z dimensions")
+
+    labels = ["x", "y", "z"]
+
+    # Create 3-row subplot layout
+    fig, axes = plt.subplots(3, 1, figsize=figsize, sharex=True)
+
+    for i, label in enumerate(labels):
+        ax = axes[i]
+        ax.plot(t, y_true[:, i], 'k-', label='True')
+        ax.plot(t, y_classical[:, i], 'r--', label='Classical')
+        ax.plot(t, y_neural[:, i], 'b-', label='Neural')
+
+        ax.set_title(f"{label}-dimension")
+        ax.set_ylabel("State")
+        ax.legend(loc='best')
+        ax.grid(True, alpha=0.3)
+
+    axes[-1].set_xlabel("Time")
+    fig.tight_layout()
+
+    return fig, axes

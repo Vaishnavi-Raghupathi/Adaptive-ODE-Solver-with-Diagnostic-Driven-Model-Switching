@@ -11,8 +11,11 @@ def generate_lorenz_data(t_span, y0, num_points, sigma=10.0, rho=28.0,
     
     The Lorenz system is defined by:
         dx/dt = sigma(y - x)
-        dy/dt = x(rho - z) - y
+        dy/dt = x(rho(t) - z) - y
         dz/dt = xy - beta*z
+
+    with time-dependent parameter:
+        rho(t) = 28 + 5*sin(t)
     
     Parameters
     ----------
@@ -41,8 +44,9 @@ def generate_lorenz_data(t_span, y0, num_points, sigma=10.0, rho=28.0,
     def lorenz(t, state):
         """Lorenz system ODE function."""
         x, y, z = state
+        rho_t = 28.0 + 5.0 * np.sin(t)
         dx_dt = sigma * (y - x)
-        dy_dt = x * (rho - z) - y
+        dy_dt = x * (rho_t - z) - y
         dz_dt = x * y - beta * z
         return [dx_dt, dy_dt, dz_dt]
     
@@ -55,7 +59,7 @@ def generate_lorenz_data(t_span, y0, num_points, sigma=10.0, rho=28.0,
     
     # Add noise if requested
     if noise_std > 0.0:
-        y = y + np.random.normal(0, noise_std, y.shape)
+        y = y + np.random.normal(0, noise_std, size=y.shape)
     
     return t, y
 
