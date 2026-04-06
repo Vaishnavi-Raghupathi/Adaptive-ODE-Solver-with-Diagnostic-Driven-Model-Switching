@@ -60,15 +60,6 @@ Open the local URL shown in terminal (usually `http://localhost:8501`).
 - **Noisy Data** → `noise_std=0.5`, `mismatch=False`
 - **Model Mismatch** → `noise_std=0.0`, `mismatch=True`
 
-## Deploy to Streamlit Community Cloud
-
-1. Push this repository to GitHub.
-2. Go to [https://share.streamlit.io](https://share.streamlit.io).
-3. Create a new app and select this repository + branch `main`.
-4. Set main file path to `app.py`.
-5. Deploy.
-
 ## Notes
 
 - Neural ODE training can be compute-heavy depending on scenario.
-- If deployment logs show missing dependencies, verify `requirements.txt` is up to date.
