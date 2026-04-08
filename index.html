@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adaptive ODE Solver</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Adaptive ODE Solver</h1>
+      <p class="subtitle">
+        Diagnostic-driven model switching for Lorenz dynamics using a classical ODE solver and Neural ODE.
+      </p>
+
+      <section class="card">
+        <h2>Scenarios</h2>
+        <div class="grid">
+          <article>
+            <h3>Clean Data</h3>
+            <p>No added noise and no mismatch; classical solver should generally be sufficient.</p>
+          </article>
+          <article>
+            <h3>Noisy Data</h3>
+            <p>Measurement noise is added while dynamics stay fixed to test robustness.</p>
+          </article>
+          <article>
+            <h3>Model Mismatch</h3>
+            <p>True dynamics vary over time, while classical fitting assumes fixed dynamics.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Project</h2>
+        <p>
+          The pipeline runs residual diagnostics and automatically chooses between
+          <strong>classical_ok</strong> and <strong>neural_ode</strong>.
+        </p>
+        <div class="actions">
+          <a href="https://github.com/Vaishnavi-Raghupathi/Adaptive-ODE-Solver-with-Diagnostic-Driven-Model-Switching" target="_blank" rel="noreferrer">View Repository</a>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
