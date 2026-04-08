@@ -1,3 +1,8 @@
 # Python cache files
 __pycache__/
 *.py[cod]
+
+# Node / Vite artifacts
+node_modules/
+dist/
+.vercel/
