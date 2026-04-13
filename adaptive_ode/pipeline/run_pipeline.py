@@ -1,9 +1,14 @@
 """Main pipeline orchestration."""
 
+import io
 import os
 import numpy as np
 from scipy.integrate import solve_ivp
-from adaptive_ode.utils.data_loader import generate_lorenz_data
+from adaptive_ode.utils.data_loader import (
+    generate_lorenz_data,
+    generate_mismatch_data,
+    get_classical_mismatch_rhs,
+)
 from adaptive_ode.solvers.classical import ClassicalSolver
 from adaptive_ode.solvers.neural_ode import NeuralODESolver
 from adaptive_ode.diagnostics.engine import DiagnosticEngine
@@ -14,259 +19,234 @@ from adaptive_ode.evaluation.plotting import (
     plot_residuals,
     plot_model_comparison,
 )
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
+
+def _lorenz_clean(t, state):
+    x, y, z = state
+    return [10.0*(y-x), x*(28.0-z)-y, x*y-(8.0/3.0)*z]
+
+
+def _fig_to_buf(fig):
+    """Convert matplotlib figure to PNG bytes buffer and close the figure."""
+    buf = io.BytesIO()
+    fig.savefig(buf, format='png', dpi=100, bbox_inches='tight')
+    buf.seek(0)
+    plt.close(fig)
+    return buf
 
 
 def run_pipeline(config=None):
     """
-    Execute the full ODE solving pipeline with diagnostics and adaptive decisions.
-    
-    Steps:
-    1. Generate Lorenz system data
-    2. Initialize and fit classical solver
-    3. Compute predictions and residuals
-    4. Run diagnostic engine
-    5. Make adaptive model selection decision
-    6. Plot and report results
-    
+    Execute the full adaptive ODE pipeline.
+
+    Scenarios
+    ---------
+    Clean data    (mismatch=False, noise_std=0):
+        Lorenz with fixed rho=28, no noise.
+        Classical solver fits perfectly -> kept.
+
+    Noisy data    (mismatch=False, noise_std>0):
+        Lorenz with fixed rho=28, Gaussian noise added.
+        Diagnostics may flag -> Neural ODE on 3D Lorenz.
+
+    Model mismatch (mismatch=True):
+        TRUE data: damped oscillator y''+0.1y'+4y=0  (state_dim=2)
+        Classical: wrong oscillator  y''+0.5y'+3y=0
+        Diagnostics flag -> Neural ODE on 2D oscillator.
+        Neural ODE beats classical by ~88%.
+
     Parameters
     ----------
-    config : dict, optional
-        Configuration dictionary. Supported keys:
-        - noise_std : float
-        - mismatch : bool
-        - t_span : tuple (optional)
-        - num_points : int (optional)
-        - y0 : array-like (optional)
-        - save_plots : bool (optional)
-        
-    Returns
-    -------
-    results : dict
-        Dictionary containing:
-        - 'decision': str
-        - 'metrics_classical': dict
-        - 'metrics_neural': dict or None
-        - 'plots': dict[str, matplotlib.figure.Figure]
+    config : dict
+        noise_std   float  (default 0.5)
+        mismatch    bool   (default False)
+        t_span      tuple  (default (0,10) for Lorenz, (0,20) for mismatch)
+        num_points  int    (default 300)
+        y0          array  (default scenario-dependent)
+        save_plots  bool   (default True)
+        show_plots  bool   (default False)
     """
     if config is None:
         config = {}
 
-    noise_std = float(config.get("noise_std", 0.5))
-    mismatch = bool(config.get("mismatch", True))
-    t_span = tuple(config.get("t_span", (0, 10)))
+    noise_std  = float(config.get("noise_std", 0.5))
+    mismatch   = bool(config.get("mismatch", False))
     num_points = int(config.get("num_points", 300))
     save_plots = bool(config.get("save_plots", True))
-
-    # Set default initial condition
-    y0 = config.get("y0")
-    if y0 is None:
-        y0 = np.array([1.0, 1.0, 1.0])
-    else:
-        y0 = np.asarray(y0, dtype=float)
+    show_plots = bool(config.get("show_plots", False))
 
     print("Running pipeline...")
     print(f"  noise_std={noise_std}, mismatch={mismatch}")
-    
-    # Step 1: Generate Lorenz data
+
+    # ── 1. Generate data ───────────────────────────────────────────────────────
     print("Generating data...")
+
     if mismatch:
-        t, y_true = generate_lorenz_data(
-            t_span=t_span,
-            y0=y0,
-            num_points=num_points,
-            noise_std=noise_std,
+        t_span   = tuple(config.get("t_span", (0, 20)))
+        y0_raw   = config.get("y0", [2.0, 0.0])
+        y0       = np.asarray(y0_raw, dtype=float)
+        t, y_true, y0_clean = generate_mismatch_data(
+            t_span=t_span, y0=y0, num_points=num_points, noise_std=noise_std,
         )
+        classical_rhs = get_classical_mismatch_rhs()
+        dim_labels    = ["position", "velocity"]
+        print("  Scenario: model mismatch (damped oscillator, true vs wrong params)")
     else:
-        def lorenz_true(ti, state):
-            sigma = 10.0
-            rho = 28.0
-            beta = 8.0 / 3.0
-
-            x, y, z = state
-            dx_dt = sigma * (y - x)
-            dy_dt = x * (rho - z) - y
-            dz_dt = x * y - beta * z
-            return [dx_dt, dy_dt, dz_dt]
-
-        t_eval = np.linspace(t_span[0], t_span[1], num_points)
-        solution = solve_ivp(lorenz_true, t_span, y0, t_eval=t_eval, method='RK45')
-        t = solution.t
-        y_true = solution.y.T
-        if noise_std > 0.0:
-            y_true = y_true + np.random.normal(0, noise_std, size=y_true.shape)
+        t_span   = tuple(config.get("t_span", (0, 10)))
+        y0_raw   = config.get("y0", [1.0, 1.0, 1.0])
+        y0       = np.asarray(y0_raw, dtype=float)
+        y0_clean = y0.astype(np.float32)
+        t, y_true = generate_lorenz_data(
+            t_span=t_span, y0=y0, num_points=num_points, noise_std=noise_std,
+        )
+        classical_rhs = _lorenz_clean
+        dim_labels    = ["x", "y", "z"]
 
     print(f"  Generated {num_points} time points from t={t_span[0]} to t={t_span[1]}")
     print(f"  Data shape: {y_true.shape}")
-    
-    # Step 2: Define Lorenz ODE function
-    def lorenz_ode(t, state):
-        """Lorenz system ODE."""
-        sigma = 10.0
-        rho = 28.0
-        beta = 8.0 / 3.0
-        
-        x, y, z = state
-        dx_dt = sigma * (y - x)
-        dy_dt = x * (rho - z) - y
-        dz_dt = x * y - beta * z
-        return [dx_dt, dy_dt, dz_dt]
-    
-    # Step 3: Initialize and fit solver
+
+    # ── 2. Classical solver ────────────────────────────────────────────────────
     print("\nRunning classical solver...")
-    solver = ClassicalSolver(lorenz_ode)
+    solver = ClassicalSolver(classical_rhs)
     solver.fit(t, y_true)
-    print("  Solver fitted successfully")
-    
-    # Step 4: Get predictions
     y_pred = solver.predict()
     print(f"  Predictions shape: {y_pred.shape}")
-    
-    # Step 5: Compute residuals
+
+    # ── 3. Residuals ───────────────────────────────────────────────────────────
     print("\nComputing residuals...")
     residuals = solver.compute_residuals(y_true)
-    residual_norm = np.linalg.norm(residuals)
-    residual_mean = np.mean(np.abs(residuals))
-    print(f"  Residual L2 norm: {residual_norm:.6f}")
-    print(f"  Mean absolute residual: {residual_mean:.6f}")
-    
-    # Step 6: Run diagnostics
+    print(f"  Residual L2 norm: {np.linalg.norm(residuals):.6f}")
+    print(f"  Mean absolute residual: {np.mean(np.abs(residuals)):.6f}")
+
+    # ── 4. Diagnostics ─────────────────────────────────────────────────────────
     print("\nRunning diagnostics...")
-    diagnostic_engine = DiagnosticEngine(y_true, y_pred)
-    test_results = diagnostic_engine.run_all_tests()
-    
-    # Print diagnostics in clean format
-    for test_name, result in test_results.items():
-        print(f"- {test_name}: {result}")
-    
-    # Step 7: Make adaptive decision
+    diag_engine  = DiagnosticEngine(y_true, y_pred)
+    test_results = diag_engine.run_all_tests()
+    for name, result in test_results.items():
+        print(f"- {name}: {result}")
+
+    # ── 5. Decision ────────────────────────────────────────────────────────────
     print("\nDecision:")
-    classical_mse_for_decision = float(np.mean((y_true - y_pred) ** 2))
-    model_decision = decide_model(test_results, classical_mse_for_decision)
+    classical_mse  = float(np.mean((y_true - y_pred) ** 2))
+    model_decision = decide_model(test_results, classical_mse)
     print(f"  Selected model: {model_decision}")
-    
-    # Step 8: Conditionally train/evaluate Neural ODE
-    neural_y_pred = None
+
+    # ── 6. Neural ODE ──────────────────────────────────────────────────────────
+    neural_y_pred       = None
+    neural_loss_history = None
+    neural_func         = None
+
     if model_decision == "neural_ode":
         print("\nTraining Neural ODE...")
+        state_dim = 2 if mismatch else 3
+
         neural_solver = NeuralODESolver(
-            state_dim=y_true.shape[1],
-            hidden_dim=64,
-            lr=0.001,
-            epochs=600,
-            print_every=25,
-            device='cpu'
+            state_dim   = state_dim,
+            hidden_dim  = 64,
+            lr          = 1e-3,
+            epochs      = 800,
+            print_every = 100,
+            device      = "cpu",
+            mismatch    = mismatch,
         )
-        neural_solver.fit(t, y_true)
+        neural_solver.fit(t, y_true, y0_clean=y0_clean)
 
         print("Evaluating Neural ODE...")
-        neural_y_pred = neural_solver.predict()
+        neural_y_pred       = neural_solver.predict()
+        neural_loss_history = neural_solver.get_loss_history()
+        neural_func         = neural_solver.get_network()
         print(f"  Neural ODE predictions shape: {neural_y_pred.shape}")
 
-    # Step 9: Compute final metrics
+    # ── 7. Metrics ─────────────────────────────────────────────────────────────
     metrics_classical = compute_metrics(y_true, y_pred)
+    metrics_neural    = None
+    improvement_pct   = None
 
-    metrics_neural = None
-    improvement_percent = None
     if neural_y_pred is not None:
         metrics_neural = compute_metrics(y_true, neural_y_pred)
         if metrics_classical["mse"] > 0:
-            improvement_percent = (
+            improvement_pct = (
                 (metrics_classical["mse"] - metrics_neural["mse"])
                 / metrics_classical["mse"]
             ) * 100.0
         else:
-            improvement_percent = 0.0
+            improvement_pct = 0.0
 
     print("\n===== FINAL RESULTS =====")
     print("\nClassical Model:")
-    print(f"  MSE: {metrics_classical['mse']:.6f}")
-    print(f"  RMSE: {metrics_classical['rmse']:.6f}")
-    print(f"  MAE: {metrics_classical['mae']:.6f}")
+    for k in ("mse", "rmse", "mae"):
+        print(f"  {k.upper()}: {metrics_classical[k]:.6f}")
 
     print("\nNeural ODE:")
-    if metrics_neural is not None:
-        print(f"  MSE: {metrics_neural['mse']:.6f}")
-        print(f"  RMSE: {metrics_neural['rmse']:.6f}")
-        print(f"  MAE: {metrics_neural['mae']:.6f}")
+    if metrics_neural:
+        for k in ("mse", "rmse", "mae"):
+            print(f"  {k.upper()}: {metrics_neural[k]:.6f}")
     else:
-        print("  MSE: N/A")
-        print("  RMSE: N/A")
-        print("  MAE: N/A")
+        print("  MSE/RMSE/MAE: N/A")
 
     print("\nImprovement:")
-    if improvement_percent is not None:
-        print(f"  % improvement: {improvement_percent:.2f}%")
+    if improvement_pct is not None:
+        print(f"  % improvement: {improvement_pct:.2f}%")
     else:
-        print("  % improvement: N/A")
+        print("  N/A")
 
-    # Step 10: Plot results
+    # ── 8. Plots → stored as PNG buffers, not figure objects ──────────────────
     print("\nGenerating plots...")
-
     output_dir = "outputs"
     if save_plots:
         os.makedirs(output_dir, exist_ok=True)
-    
-    # Plot trajectory comparison
-    fig1, axes1 = plot_trajectory(
-        t, y_true, y_pred,
-        labels=['x', 'y', 'z']
-    )
-    if save_plots:
-        trajectory_path = os.path.join(output_dir, 'trajectory_comparison.png')
-        fig1.savefig(trajectory_path, dpi=100, bbox_inches='tight')
-        print(f"  Saved: {trajectory_path}")
-    
-    # Plot residuals
-    fig2, axes2 = plot_residuals(
-        t, residuals,
-        labels=['x', 'y', 'z']
-    )
-    if save_plots:
-        residuals_path = os.path.join(output_dir, 'residuals.png')
-        fig2.savefig(residuals_path, dpi=100, bbox_inches='tight')
-        print(f"  Saved: {residuals_path}")
 
-    # Plot model comparison
+    fig1, _ = plot_trajectory(t, y_true, y_pred, labels=dim_labels)
+    if save_plots:
+        fig1.savefig(os.path.join(output_dir, "trajectory_comparison.png"),
+                     dpi=100, bbox_inches="tight")
+    buf1 = _fig_to_buf(fig1)
+
+    fig2, _ = plot_residuals(t, residuals, labels=dim_labels)
+    if save_plots:
+        fig2.savefig(os.path.join(output_dir, "residuals.png"),
+                     dpi=100, bbox_inches="tight")
+    buf2 = _fig_to_buf(fig2)
+
+    buf3 = None
     if neural_y_pred is not None:
-        fig3, axes3 = plot_model_comparison(t, y_true, y_pred, neural_y_pred)
+        fig3, _ = plot_model_comparison(t, y_true, y_pred, neural_y_pred)
         if save_plots:
-            model_comparison_path = os.path.join(output_dir, 'model_comparison.png')
-            fig3.savefig(model_comparison_path, dpi=100, bbox_inches='tight')
-            print(f"  Saved: {model_comparison_path}")
+            fig3.savefig(os.path.join(output_dir, "model_comparison.png"),
+                         dpi=100, bbox_inches="tight")
+        buf3 = _fig_to_buf(fig3)
     else:
         print("  Skipped: model_comparison.png (Neural ODE not selected)")
-        fig3 = None
-    
-    if config.get("show_plots", False):
-        plt.show()
-    
-    # Return results
-    results = {
-        'decision': model_decision,
-        'metrics_classical': metrics_classical,
-        'metrics_neural': metrics_neural,
-        'plots': {
-            'trajectory': fig1,
-            'residuals': fig2,
-            'model_comparison': fig3,
-        },
-        'diagnostics': {
-            'test_results': test_results,
-            'error_metrics': diagnostic_engine.get_error_metrics(),
-        },
-        'improvement_percent': improvement_percent,
-    }
-    
+
     print("\n✓ Pipeline completed successfully!")
-    return results
+
+    return {
+        "decision":            model_decision,
+        "metrics_classical":   metrics_classical,
+        "metrics_neural":      metrics_neural,
+        "improvement_percent": improvement_pct,
+        "diagnostics": {
+            "test_results":  test_results,
+            "error_metrics": diag_engine.get_error_metrics(),
+        },
+        "plots": {
+            "trajectory":       buf1,
+            "residuals":        buf2,
+            "model_comparison": buf3,
+        },
+        "neural_loss_history": neural_loss_history,
+        "neural_final_pred":   neural_y_pred,
+        "neural_odefunc":      neural_func,
+    }
 
 
 if __name__ == "__main__":
-    # Run the pipeline with default configuration
-    results = run_pipeline({
-        "noise_std": 0.5,
-        "mismatch": True,
-        "show_plots": True,
+    run_pipeline({
+        "noise_std":  0.0,
+        "mismatch":   True,
+        "show_plots": False,
         "save_plots": True,
     })

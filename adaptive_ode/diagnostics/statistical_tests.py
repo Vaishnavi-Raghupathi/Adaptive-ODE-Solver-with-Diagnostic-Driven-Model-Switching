@@ -2,6 +2,21 @@
 
 import numpy as np
 from scipy import stats as sp_stats
+from statsmodels.tsa.stattools import adfuller
+from statsmodels.stats.diagnostic import acorr_ljungbox
+
+
+def _is_near_constant(x, tol=1e-12):
+    """Return True when a signal has negligible variation."""
+    x = np.asarray(x)
+    if x.size == 0:
+        return True
+    return float(np.std(x)) < tol
+
+
+def _residuals_are_negligible(residuals, tol=1e-12):
+    """Return True when residual field is effectively zero/constant."""
+    return _is_near_constant(np.asarray(residuals).flatten(), tol=tol)
 
 
 def compute_residual_statistics(residuals):
@@ -82,6 +97,10 @@ def test_heteroscedasticity(residuals, y_pred, alpha=0.05):
     has_heteroscedasticity : bool
         True if heteroscedasticity detected (p-value < alpha)
     """
+    # Perfect/near-perfect fit: no variance pattern to diagnose
+    if _residuals_are_negligible(residuals):
+        return False
+
     # Flatten arrays if multi-dimensional
     residuals_flat = residuals.flatten()
     y_pred_flat = y_pred.flatten()
@@ -141,6 +160,10 @@ def test_autocorrelation(residuals, alpha=0.05):
     has_autocorrelation : bool
         True if autocorrelation detected in any dimension
     """
+    # Constant/near-zero residuals: treat as no actionable autocorrelation
+    if _residuals_are_negligible(residuals):
+        return False
+
     # Handle 1D case
     if residuals.ndim == 1:
         residuals_2d = residuals.reshape(-1, 1)
@@ -152,52 +175,21 @@ def test_autocorrelation(residuals, alpha=0.05):
     # Test each dimension
     for d in range(n_dims):
         res = residuals_2d[:, d]
+
+        if _is_near_constant(res):
+            continue
         
         # Ljung-Box test (lags=10)
         try:
-            lb_stat, p_value = _ljung_box_test(res, lags=10)
+            max_lag = min(10, max(1, len(res) - 1))
+            lb_result = acorr_ljungbox(res, lags=[max_lag], return_df=True)
+            p_value = float(lb_result["lb_pvalue"].iloc[-1])
             if p_value < alpha:
                 return True
         except:
             pass
     
     return False
-
-
-def _ljung_box_test(residuals, lags=10):
-    """
-    Simple Ljung-Box test implementation.
-    
-    Parameters
-    ----------
-    residuals : ndarray
-        1D residuals array
-    lags : int
-        Number of lags to test
-        
-    Returns
-    -------
-    stat : float
-        Test statistic
-    p_value : float
-        P-value
-    """
-    n = len(residuals)
-    
-    # Compute autocorrelations
-    acf_values = np.zeros(lags)
-    for k in range(1, lags + 1):
-        c0 = np.sum(residuals * np.roll(residuals, k)) / n
-        c_var = np.var(residuals)
-        acf_values[k - 1] = c0 / (c_var + 1e-10)
-    
-    # Ljung-Box statistic
-    stat = n * (n + 2) * np.sum(acf_values ** 2 / (n - np.arange(1, lags + 1)))
-    
-    # Chi-square test
-    p_value = 1 - sp_stats.chi2.cdf(stat, df=lags)
-    
-    return stat, p_value
 
 
 def test_stationarity(residuals, alpha=0.05):
@@ -218,6 +210,10 @@ def test_stationarity(residuals, alpha=0.05):
     is_non_stationary : bool
         True if non-stationary (fails stationarity test)
     """
+    # Constant/near-zero residuals are effectively stationary for diagnostics.
+    if _residuals_are_negligible(residuals):
+        return False
+
     # Handle 1D case
     if residuals.ndim == 1:
         residuals_2d = residuals.reshape(-1, 1)
@@ -230,6 +226,10 @@ def test_stationarity(residuals, alpha=0.05):
     # Test each dimension
     for d in range(n_dims):
         res = residuals_2d[:, d]
+
+        if _is_near_constant(res):
+            # Constant residual stream is treated as stationary.
+            continue
         
         try:
             p_value = _adf_test(res)
@@ -244,7 +244,7 @@ def test_stationarity(residuals, alpha=0.05):
 
 def _adf_test(residuals):
     """
-    Simple Augmented Dickey-Fuller test implementation.
+    Augmented Dickey-Fuller test wrapper using statsmodels.
     
     Parameters
     ----------
@@ -256,31 +256,8 @@ def _adf_test(residuals):
     p_value : float
         P-value for ADF test
     """
-    n = len(residuals)
-    
-    # ADF regression: Δy_t = α + β*y_{t-1} + ε_t
-    y = residuals[1:]  # Δy_t
-    y_lag = residuals[:-1]  # y_{t-1}
-    
-    # Add intercept
-    X = np.column_stack([np.ones(len(y)), y_lag])
-    
-    # Fit model
-    beta = np.linalg.lstsq(X, y, rcond=None)[0]
-    y_fitted = X @ beta
-    residuals_model = y - y_fitted
-    
-    # t-statistic for β
-    ss_residual = np.sum(residuals_model ** 2)
-    se_squared = ss_residual / (len(y) - 2)
-    xx_inv = np.linalg.inv(X.T @ X)
-    se = np.sqrt(se_squared * xx_inv[1, 1])
-    t_stat = beta[1] / (se + 1e-10)
-    
-    # Approximate p-value using t-distribution
-    # (simplified; actual ADF uses special distribution)
-    p_value = sp_stats.t.sf(abs(t_stat), df=len(y) - 2) * 2
-    
+    p_value = adfuller(residuals, autolag='AIC')[1]
+
     return p_value
 
 
@@ -305,6 +282,10 @@ def test_state_dependence(residuals, y_pred, alpha=0.05):
     state_dependent : bool
         True if errors show state-dependence (R² > 0.1)
     """
+    # Perfect/near-perfect fit: no state dependence in residual magnitude
+    if _residuals_are_negligible(residuals):
+        return False
+
     # Flatten arrays
     residuals_flat = residuals.flatten()
     y_pred_flat = y_pred.flatten()

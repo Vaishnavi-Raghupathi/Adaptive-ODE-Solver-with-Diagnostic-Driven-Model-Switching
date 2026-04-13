@@ -4,103 +4,96 @@ import numpy as np
 from scipy.integrate import solve_ivp
 
 
-def generate_lorenz_data(t_span, y0, num_points, sigma=10.0, rho=28.0, 
-                         beta=8.0/3.0, noise_std=0.0):
-    """
-    Generate Lorenz system trajectories.
-    
-    The Lorenz system is defined by:
-        dx/dt = sigma(y - x)
-        dy/dt = x(rho(t) - z) - y
-        dz/dt = xy - beta*z
+def _osc_true(t, s):
+    """True damped oscillator: y'' + 0.1y' + 4y = 0."""
+    y, v = s
+    return [v, -0.1 * v - 4.0 * y]
 
-    with time-dependent parameter:
-        rho(t) = 28 + 5*sin(t)
-    
-    Parameters
-    ----------
-    t_span : tuple
-        Time interval (t0, tf)
-    y0 : array-like
-        Initial conditions [x0, y0, z0]
-    num_points : int
-        Number of time points to evaluate
-    sigma : float
-        Lorenz parameter (default: 10.0)
-    rho : float
-        Lorenz parameter (default: 28.0)
-    beta : float
-        Lorenz parameter (default: 8/3)
-    noise_std : float
-        Standard deviation of Gaussian noise to add (default: 0.0)
-        
+
+def _osc_classical(t, s):
+    """Wrong oscillator assumed by classical solver: y'' + 0.5y' + 3y = 0."""
+    y, v = s
+    return [v, -0.5 * v - 3.0 * y]
+
+
+def generate_lorenz_data(
+    t_span=(0, 10),
+    y0=None,
+    num_points=300,
+    sigma=10.0,
+    rho=28.0,
+    beta=8.0 / 3.0,
+    noise_std=0.0,
+):
+    """
+    Generate clean or noisy Lorenz trajectory.
+
     Returns
     -------
-    t : ndarray
-        Time points (shape: num_points)
-    y : ndarray
-        State values (shape: num_points, 3)
+    t : ndarray  shape (num_points,)
+    y : ndarray  shape (num_points, 3)
     """
+    if y0 is None:
+        y0 = [1.0, 1.0, 1.0]
+
     def lorenz(t, state):
-        """Lorenz system ODE function."""
         x, y, z = state
-        rho_t = 28.0 + 5.0 * np.sin(t)
-        dx_dt = sigma * (y - x)
-        dy_dt = x * (rho_t - z) - y
-        dz_dt = x * y - beta * z
-        return [dx_dt, dy_dt, dz_dt]
-    
-    # Solve the ODE
+        return [sigma*(y-x), x*(rho-z)-y, x*y-beta*z]
+
     t_eval = np.linspace(t_span[0], t_span[1], num_points)
-    solution = solve_ivp(lorenz, t_span, y0, t_eval=t_eval, method='RK45')
-    
-    t = solution.t
-    y = solution.y.T  # Transpose to get shape (num_points, 3)
-    
-    # Add noise if requested
+    sol = solve_ivp(lorenz, t_span, y0, t_eval=t_eval,
+                    method="RK45", rtol=1e-9, atol=1e-10)
+    y = sol.y.T.copy()
     if noise_std > 0.0:
-        y = y + np.random.normal(0, noise_std, size=y.shape)
-    
-    return t, y
+        y += np.random.normal(0.0, noise_std, size=y.shape)
+    return sol.t, y
+
+
+def generate_mismatch_data(
+    t_span=(0, 20),
+    y0=None,
+    num_points=300,
+    noise_std=0.0,
+):
+    """
+    Generate damped oscillator trajectory using TRUE parameters.
+
+    True system:      y'' + 0.1y' + 4.0y = 0   (damping=0.1, freq^2=4.0)
+    Classical solver: y'' + 0.5y' + 3.0y = 0   (wrong params)
+
+    Returns
+    -------
+    t        : ndarray  shape (num_points,)
+    y        : ndarray  shape (num_points, 2)
+    y0_clean : ndarray  shape (2,)
+    """
+    if y0 is None:
+        y0 = [2.0, 0.0]
+
+    t_eval = np.linspace(t_span[0], t_span[1], num_points)
+    sol = solve_ivp(_osc_true, t_span, y0, t_eval=t_eval,
+                    method="RK45", rtol=1e-10, atol=1e-11)
+    y = sol.y.T.copy()
+    if noise_std > 0.0:
+        y += np.random.normal(0.0, noise_std, size=y.shape)
+    return sol.t, y, np.array(y0, dtype=np.float32)
+
+
+def get_classical_mismatch_rhs():
+    """Return wrong oscillator RHS for classical solver in mismatch scenario."""
+    return _osc_classical
+
+
+def get_true_mismatch_rhs():
+    """Return true oscillator RHS for Neural ODE training target."""
+    return _osc_true
 
 
 def load_data(filepath, delimiter=","):
-    """
-    Load data from a CSV file.
-    
-    Parameters
-    ----------
-    filepath : str
-        Path to the CSV file
-    delimiter : str
-        Delimiter used in the file (default: ",")
-        
-    Returns
-    -------
-    data : ndarray
-        Loaded data as numpy array
-    """
-    data = np.loadtxt(filepath, delimiter=delimiter)
-    return data
+    return np.loadtxt(filepath, delimiter=delimiter)
 
 
 def normalize_data(data, axis=0):
-    """
-    Normalize data to zero mean and unit variance.
-    
-    Parameters
-    ----------
-    data : ndarray
-        Input data
-    axis : int
-        Axis along which to normalize
-        
-    Returns
-    -------
-    normalized : ndarray
-        Normalized data
-    """
     mean = np.mean(data, axis=axis, keepdims=True)
-    std = np.std(data, axis=axis, keepdims=True)
-    normalized = (data - mean) / (std + 1e-8)
-    return normalized
+    std  = np.std(data,  axis=axis, keepdims=True)
+    return (data - mean) / (std + 1e-8)

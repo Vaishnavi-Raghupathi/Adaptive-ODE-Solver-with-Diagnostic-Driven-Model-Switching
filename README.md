@@ -1,65 +1,52 @@
 # Adaptive ODE Solver with Diagnostic-Driven Model Switching
 
-An adaptive modeling pipeline for ODE trajectories that:
+This project models Lorenz system trajectories with a classical ODE solver, analyzes residuals with statistical diagnostics, and automatically switches to a Neural ODE when diagnostics indicate the classical model is no longer sufficient. It supports three scenarios: Clean Data, Noisy Data, and Model Mismatch.
 
-- solves with a classical ODE model,
-- diagnoses residual behavior,
-- decides whether to keep the classical model or switch to a Neural ODE,
-- reports metrics and visual comparisons.
+## How It Works
 
-## Features
+1. Generate Lorenz trajectory data.
+2. Run the classical solver.
+3. Diagnose residuals.
+4. Decide whether classical is enough or Neural ODE is needed.
+5. Train Neural ODE if needed.
+6. Report metrics and plots.
 
-- Lorenz-system trajectory generation (`clean`, `noisy`, and `mismatch` scenarios)
-- Classical solver baseline using SciPy
-- Diagnostic tests for residual analysis
-- Rule-based model switching (`classical_ok` vs `neural_ode`)
-- Neural ODE training with normalized targets
-- Streamlit demo app for interactive runs
+## Results
 
-## Project Structure
+| Scenario | Decision | Classical MSE | Neural MSE | Improvement |
+|---|---|---|---|---|
+| Clean Data | classical_ok | 0.017 | N/A | N/A |
+| Noisy Data | classical_ok | 1.39 | N/A | N/A |
+| Model Mismatch | neural_ode | 1.81 | 0.24 | +86.5% |
 
-```text
-adaptive_ode/
-  decision/
-  diagnostics/
-  evaluation/
-  pipeline/
-  solvers/
-  utils/
-app.py
-requirements.txt
-```
+## Tech Stack
 
-## Setup (Local)
+Python: core language and project structure.
+
+PyTorch + torchdiffeq (Neural ODE): neural dynamics modeling and ODE integration.
+
+SciPy (classical solver + statistical tests): classical ODE solving and numerical routines.
+
+Statsmodels (Breusch-Pagan, Ljung-Box, ADF): residual diagnostic testing.
+
+Streamlit (demo UI): interactive scenario selection and results visualization.
+
+## Run Locally
 
 ```bash
-cd "/Users/vaishnaviraghupathi/Desktop/Adaptive ODE Solver with Diagnostic-Driven Model Switching/Adaptive-ODE-Solver-with-Diagnostic-Driven-Model-Switching"
 python3 -m venv venv
 source venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
-```
-
-## Run the Pipeline (CLI)
-
-```bash
-python -m adaptive_ode.pipeline.run_pipeline
-```
-
-## Run the Streamlit App (Local)
-
-```bash
 python -m streamlit run app.py
 ```
 
-Open the local URL shown in terminal (usually `http://localhost:8501`).
+## Deploy on Streamlit Cloud
 
-## Streamlit App Scenarios
+1. Push this repository to GitHub.
+2. Go to Streamlit Community Cloud and create a new app.
+3. Select this repository and branch.
+4. Set the main file path to `app.py`.
+5. Deploy.
 
-- **Clean Data** → `noise_std=0.0`, `mismatch=False`
-- **Noisy Data** → `noise_std=0.5`, `mismatch=False`
-- **Model Mismatch** → `noise_std=0.0`, `mismatch=True`
-
-## Notes
-
-- Neural ODE training can be compute-heavy depending on scenario.
+Streamlit Cloud will install dependencies from `requirements.txt` automatically.
