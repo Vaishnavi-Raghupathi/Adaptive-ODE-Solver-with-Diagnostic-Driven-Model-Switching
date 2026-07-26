@@ -1,35 +1,42 @@
-# Adaptive ODE Solver with Diagnostic-Driven Model Switching
+# Adaptive Solver Selection for Dynamical Systems
 
-This project models Lorenz system trajectories with a classical ODE solver, analyzes residuals with statistical diagnostics, and automatically switches to a Neural ODE when diagnostics indicate the classical model is no longer sufficient. It supports three scenarios: Clean Data, Noisy Data, and Model Mismatch.
+This project benchmarks multiple solver strategies for a selected dynamical system and recommends the best method from held-out trajectory performance. It is designed as a research-assistant style web app: instead of manually trying classical, hybrid, and physics-informed approaches, a researcher can run a small solver tournament and inspect the tradeoffs.
+
+## Solver Families
+
+- Classical explicit solvers: fixed-step RK4, RK45, DOP853.
+- Classical implicit solvers: BDF, Radau, LSODA.
+- Hybrid residual correction: RK4 baseline plus a neural network trained to predict the residual.
+- PINN-style surrogate: neural trajectory model trained with data loss and an ODE residual penalty.
+
+## Built-In Systems
+
+- Lorenz attractor: nonlinear chaotic dynamics.
+- Van der Pol oscillator: nonlinear oscillator with moderate stiffness.
+- Robertson chemical kinetics: highly stiff reaction dynamics.
+- Misspecified damped oscillator: true dynamics differ from the classical baseline, making residual correction useful.
 
 ## How It Works
 
-1. Generate Lorenz trajectory data.
-2. Run the classical solver.
-3. Diagnose residuals.
-4. Decide whether classical is enough or Neural ODE is needed.
-5. Train Neural ODE if needed.
-6. Report metrics and plots.
+1. Generate a high-accuracy reference trajectory for the chosen system.
+2. Add optional observation noise to create training observations.
+3. Split the trajectory into train and held-out regions.
+4. Run all enabled solver candidates.
+5. Score candidates on held-out MSE, RMSE, MAE, and runtime.
+6. Recommend the solver with the lowest held-out error.
+7. Show trajectory, residual, diagnostics, and ranking plots.
 
-## Results
+## Uploaded Data Mode
 
-| Scenario | Decision | Classical MSE | Neural MSE | Improvement |
-|---|---|---|---|---|
-| Clean Data | classical_ok | 0.017 | N/A | N/A |
-| Noisy Data | classical_ok | 1.39 | N/A | N/A |
-| Model Mismatch | neural_ode | 1.81 | 0.24 | +86.5% |
+Researchers can also upload a CSV when the governing equations are unknown. The app expects one numeric time column and one or more numeric state columns.
 
-## Tech Stack
+For uploaded data, the app runs data-driven candidates:
 
-Python: core language and project structure.
+- Cubic spline trajectory fit.
+- MLP trajectory surrogate.
+- Polynomial learned ODE, a lightweight SINDy-style dynamics model.
 
-PyTorch + torchdiffeq (Neural ODE): neural dynamics modeling and ODE integration.
-
-SciPy (classical solver + statistical tests): classical ODE solving and numerical routines.
-
-Statsmodels (Breusch-Pagan, Ljung-Box, ADF): residual diagnostic testing.
-
-Streamlit (demo UI): interactive scenario selection and results visualization.
+Uploaded data is split chronologically: the first segment trains the data-driven models and the later segment is held out for evaluation.
 
 ## Run Locally
 
@@ -41,12 +48,18 @@ python -m pip install -r requirements.txt
 python -m streamlit run app.py
 ```
 
-## Deploy on Streamlit Cloud
+## Publish
 
-1. Push this repository to GitHub.
-2. Go to Streamlit Community Cloud and create a new app.
+This app is ready to publish on Streamlit Community Cloud:
+
+1. Push the repository to GitHub.
+2. Create a new Streamlit app.
 3. Select this repository and branch.
 4. Set the main file path to `app.py`.
 5. Deploy.
 
-Streamlit Cloud will install dependencies from `requirements.txt` automatically.
+For a public demo, leave the PINN option off by default because it can be slower on free cloud resources.
+
+## Notes
+
+The PINN candidate is intentionally lightweight so it can run inside a demo app. For serious stiff-system research, implicit classical methods such as BDF, Radau, or LSODA should remain strong baselines, and the app allows them to win when their held-out metrics are best.

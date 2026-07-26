@@ -1,252 +1,376 @@
-"""Main pipeline orchestration."""
+"""Adaptive solver-selection pipeline."""
 
 import io
 import os
-import numpy as np
-from scipy.integrate import solve_ivp
-from adaptive_ode.utils.data_loader import (
-    generate_lorenz_data,
-    generate_mismatch_data,
-    get_classical_mismatch_rhs,
-)
-from adaptive_ode.solvers.classical import ClassicalSolver
-from adaptive_ode.solvers.neural_ode import NeuralODESolver
-from adaptive_ode.diagnostics.engine import DiagnosticEngine
-from adaptive_ode.decision.rules import decide_model
-from adaptive_ode.evaluation.metrics import compute_metrics
-from adaptive_ode.evaluation.plotting import (
-    plot_trajectory,
-    plot_residuals,
-    plot_model_comparison,
-)
+
 import matplotlib
-matplotlib.use('Agg')
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import numpy as np
+
+from adaptive_ode.diagnostics.engine import DiagnosticEngine
+from adaptive_ode.solvers.candidates import (
+    choose_best,
+    run_cubic_spline_data,
+    run_hybrid_residual,
+    run_mlp_trajectory_data,
+    run_pinn_surrogate,
+    run_rk4,
+    run_scipy_method,
+    run_sindy_polynomial_data,
+    solve_reference,
+)
+from adaptive_ode.systems import get_system
 
 
-def _lorenz_clean(t, state):
-    x, y, z = state
-    return [10.0*(y-x), x*(28.0-z)-y, x*y-(8.0/3.0)*z]
+CLASSICAL_METHODS = ["RK45", "DOP853", "BDF", "Radau", "LSODA"]
 
 
 def _fig_to_buf(fig):
-    """Convert matplotlib figure to PNG bytes buffer and close the figure."""
     buf = io.BytesIO()
-    fig.savefig(buf, format='png', dpi=100, bbox_inches='tight')
+    fig.savefig(buf, format="png", dpi=110, bbox_inches="tight")
     buf.seek(0)
     plt.close(fig)
     return buf
 
 
+def _mask_train_test(n_points, train_fraction, seed):
+    n_train = int(np.clip(train_fraction, 0.2, 0.9) * n_points)
+    n_train = min(max(n_train, 2), n_points - 1)
+    train_mask = np.zeros(n_points, dtype=bool)
+    rng = np.random.default_rng(seed)
+    train_idx = rng.choice(n_points, size=n_train, replace=False)
+    train_mask[train_idx] = True
+    train_mask[0] = True
+    return train_mask, ~train_mask
+
+
+def _chronological_train_test(n_points, train_fraction):
+    split_idx = int(np.clip(train_fraction, 0.2, 0.9) * n_points)
+    split_idx = min(max(split_idx, 2), n_points - 1)
+    train_mask = np.zeros(n_points, dtype=bool)
+    train_mask[:split_idx] = True
+    return train_mask, ~train_mask
+
+
+def _result_row(result, recommended_name):
+    metrics = result.metrics if result.metrics and np.isfinite(result.metrics["mse"]) else None
+    row = {
+        "Solver": result.name,
+        "Family": result.family,
+        "Status": result.status,
+        "MSE": None,
+        "RMSE": None,
+        "MAE": None,
+        "Runtime (s)": round(result.runtime_seconds, 4),
+        "Recommended": result.name == recommended_name,
+        "Notes": result.message,
+    }
+    if metrics:
+        row["MSE"] = metrics["mse"]
+        row["RMSE"] = metrics["rmse"]
+        row["MAE"] = metrics["mae"]
+    return row
+
+
+def _recommendation_reason(best, system):
+    if best is None:
+        return "No solver completed successfully."
+
+    reason = (
+        f"{best.name} produced the strongest held-out accuracy for this "
+        f"{system.stiffness} system."
+    )
+    if best.family == "Hybrid correction":
+        return reason + " The residual learner helped because the baseline physics has systematic error."
+    if best.family == "Physics-informed NN":
+        return reason + " The physics penalty helped the neural surrogate respect the governing equations."
+    if best.family == "Classical implicit":
+        return reason + " Implicit integration is usually a strong fit when stiffness is present."
+    return reason + " The explicit numerical method is accurate enough without extra model training."
+
+
+def _data_recommendation_reason(best):
+    if best is None:
+        return "No data-driven candidate completed successfully."
+
+    reason = f"{best.name} produced the lowest held-out error on the uploaded trajectory."
+    if best.family == "Data-driven dynamics":
+        return reason + " It also provides an explicit learned ODE that can be integrated forward."
+    if best.family == "Data-driven NN":
+        return reason + " This is useful for trajectory fitting when the governing equation is unknown."
+    return reason + " This is strongest when the goal is smooth interpolation inside the observed time range."
+
+
+def _plot_best_trajectory(t, y_reference, y_observed, best, labels):
+    n_dims = y_reference.shape[1]
+    fig, axes = plt.subplots(n_dims, 1, figsize=(11, 2.6 * n_dims), sharex=True)
+    if n_dims == 1:
+        axes = [axes]
+
+    for dim, ax in enumerate(axes):
+        ax.plot(t, y_reference[:, dim], color="black", linewidth=2, label="reference")
+        ax.scatter(t, y_observed[:, dim], color="#7c9eb2", s=9, alpha=0.45, label="observed")
+        if best and best.prediction is not None:
+            ax.plot(t, best.prediction[:, dim], color="#c23b22", linestyle="--", linewidth=2, label=best.name)
+        ax.set_ylabel(labels[dim])
+        ax.grid(True, alpha=0.25)
+        ax.legend(loc="best")
+
+    axes[-1].set_xlabel("time")
+    fig.suptitle("Recommended Solver Trajectory", fontweight="bold")
+    fig.tight_layout()
+    return _fig_to_buf(fig)
+
+
+def _plot_best_residuals(t, y_reference, best, labels):
+    if best is None or best.prediction is None:
+        return None
+
+    residuals = y_reference - best.prediction
+    n_dims = residuals.shape[1]
+    fig, axes = plt.subplots(n_dims, 1, figsize=(11, 2.4 * n_dims), sharex=True)
+    if n_dims == 1:
+        axes = [axes]
+
+    for dim, ax in enumerate(axes):
+        ax.plot(t, residuals[:, dim], color="#2f7d32", linewidth=1.5)
+        ax.axhline(0.0, color="black", linestyle="--", linewidth=0.8, alpha=0.5)
+        ax.set_ylabel(labels[dim])
+        ax.grid(True, alpha=0.25)
+
+    axes[-1].set_xlabel("time")
+    fig.suptitle("Recommended Solver Residuals", fontweight="bold")
+    fig.tight_layout()
+    return _fig_to_buf(fig)
+
+
+def _plot_candidate_mse(results):
+    successful = [result for result in results if result.status == "ok" and result.metrics]
+    if not successful:
+        return None
+
+    successful = sorted(successful, key=lambda result: result.metrics["mse"])
+    names = [result.name for result in successful]
+    values = [result.metrics["mse"] for result in successful]
+    colors = ["#2f7d32" if idx == 0 else "#7c9eb2" for idx in range(len(successful))]
+
+    fig, ax = plt.subplots(figsize=(11, 5))
+    ax.barh(names, values, color=colors)
+    ax.set_xscale("log")
+    ax.set_xlabel("held-out MSE (log scale)")
+    ax.set_title("Solver Ranking", fontweight="bold")
+    ax.grid(True, axis="x", alpha=0.25)
+    fig.tight_layout()
+    return _fig_to_buf(fig)
+
+
 def run_pipeline(config=None):
     """
-    Execute the full adaptive ODE pipeline.
-
-    Scenarios
-    ---------
-    Clean data    (mismatch=False, noise_std=0):
-        Lorenz with fixed rho=28, no noise.
-        Classical solver fits perfectly -> kept.
-
-    Noisy data    (mismatch=False, noise_std>0):
-        Lorenz with fixed rho=28, Gaussian noise added.
-        Diagnostics may flag -> Neural ODE on 3D Lorenz.
-
-    Model mismatch (mismatch=True):
-        TRUE data: damped oscillator y''+0.1y'+4y=0  (state_dim=2)
-        Classical: wrong oscillator  y''+0.5y'+3y=0
-        Diagnostics flag -> Neural ODE on 2D oscillator.
-        Neural ODE beats classical by ~88%.
+    Run a solver-selection benchmark for a built-in dynamical system.
 
     Parameters
     ----------
     config : dict
-        noise_std   float  (default 0.5)
-        mismatch    bool   (default False)
-        t_span      tuple  (default (0,10) for Lorenz, (0,20) for mismatch)
-        num_points  int    (default 300)
-        y0          array  (default scenario-dependent)
-        save_plots  bool   (default True)
-        show_plots  bool   (default False)
+        system_key      str    Built-in system key.
+        noise_std       float  Observation noise used for training data.
+        num_points      int    Number of trajectory points.
+        train_fraction  float  Initial fraction used to train neural candidates.
+        include_pinn    bool   Whether to run the PINN-style candidate.
+        pinn_epochs     int    PINN training epochs.
+        save_plots      bool   Save generated plots into outputs/.
     """
-    if config is None:
-        config = {}
+    config = config or {}
 
-    noise_std  = float(config.get("noise_std", 0.5))
-    mismatch   = bool(config.get("mismatch", False))
+    legacy_mismatch = bool(config.get("mismatch", False))
+    system_key = config.get("system_key") or ("mismatch" if legacy_mismatch else "lorenz")
+    system = get_system(system_key)
+
+    noise_std = float(config.get("noise_std", 0.0))
     num_points = int(config.get("num_points", 300))
+    train_fraction = float(config.get("train_fraction", 0.7))
+    include_pinn = bool(config.get("include_pinn", True))
+    pinn_epochs = int(config.get("pinn_epochs", config.get("epochs", 250)))
     save_plots = bool(config.get("save_plots", True))
-    show_plots = bool(config.get("show_plots", False))
+    seed = int(config.get("seed", 7))
 
-    print("Running pipeline...")
-    print(f"  noise_std={noise_std}, mismatch={mismatch}")
+    t = np.linspace(system.t_span[0], system.t_span[1], num_points)
+    y_reference = solve_reference(system, t)
+    y_observed = y_reference.copy()
+    if noise_std > 0.0:
+        rng = np.random.default_rng(seed)
+        y_observed += rng.normal(0.0, noise_std, size=y_observed.shape)
+        y_observed[0] = y_reference[0]
 
-    # ── 1. Generate data ───────────────────────────────────────────────────────
-    print("Generating data...")
+    train_mask, test_mask = _mask_train_test(num_points, train_fraction, seed)
 
-    if mismatch:
-        t_span   = tuple(config.get("t_span", (0, 20)))
-        y0_raw   = config.get("y0", [2.0, 0.0])
-        y0       = np.asarray(y0_raw, dtype=float)
-        t, y_true, y0_clean = generate_mismatch_data(
-            t_span=t_span, y0=y0, num_points=num_points, noise_std=noise_std,
+    results = [run_rk4(system, t, y_reference, test_mask)]
+    for method in CLASSICAL_METHODS:
+        results.append(run_scipy_method(system, method, t, y_reference, test_mask))
+
+    results.append(run_hybrid_residual(system, t, y_observed, y_reference, train_mask, test_mask))
+
+    if include_pinn:
+        results.append(
+            run_pinn_surrogate(
+                system,
+                t,
+                y_observed,
+                y_reference,
+                train_mask,
+                test_mask,
+                epochs=pinn_epochs,
+            )
         )
-        classical_rhs = get_classical_mismatch_rhs()
-        dim_labels    = ["position", "velocity"]
-        print("  Scenario: model mismatch (damped oscillator, true vs wrong params)")
-    else:
-        t_span   = tuple(config.get("t_span", (0, 10)))
-        y0_raw   = config.get("y0", [1.0, 1.0, 1.0])
-        y0       = np.asarray(y0_raw, dtype=float)
-        y0_clean = y0.astype(np.float32)
-        t, y_true = generate_lorenz_data(
-            t_span=t_span, y0=y0, num_points=num_points, noise_std=noise_std,
-        )
-        classical_rhs = _lorenz_clean
-        dim_labels    = ["x", "y", "z"]
 
-    print(f"  Generated {num_points} time points from t={t_span[0]} to t={t_span[1]}")
-    print(f"  Data shape: {y_true.shape}")
+    best = choose_best(results)
+    recommended_name = best.name if best else None
+    rows = [_result_row(result, recommended_name) for result in results]
+    rows = sorted(rows, key=lambda row: float("inf") if row["MSE"] is None else row["MSE"])
 
-    # ── 2. Classical solver ────────────────────────────────────────────────────
-    print("\nRunning classical solver...")
-    solver = ClassicalSolver(classical_rhs)
-    solver.fit(t, y_true)
-    y_pred = solver.predict()
-    print(f"  Predictions shape: {y_pred.shape}")
+    diagnostics = None
+    if best and best.prediction is not None:
+        diag_engine = DiagnosticEngine(y_reference, best.prediction)
+        diagnostics = {
+            "test_results": diag_engine.run_all_tests(),
+            "error_metrics": diag_engine.get_error_metrics(),
+            "residual_stats": diag_engine.get_residual_statistics(),
+        }
 
-    # ── 3. Residuals ───────────────────────────────────────────────────────────
-    print("\nComputing residuals...")
-    residuals = solver.compute_residuals(y_true)
-    print(f"  Residual L2 norm: {np.linalg.norm(residuals):.6f}")
-    print(f"  Mean absolute residual: {np.mean(np.abs(residuals)):.6f}")
+    plots = {
+        "trajectory": _plot_best_trajectory(t, y_reference, y_observed, best, system.labels),
+        "residuals": _plot_best_residuals(t, y_reference, best, system.labels),
+        "model_comparison": _plot_candidate_mse(results),
+    }
 
-    # ── 4. Diagnostics ─────────────────────────────────────────────────────────
-    print("\nRunning diagnostics...")
-    diag_engine  = DiagnosticEngine(y_true, y_pred)
-    test_results = diag_engine.run_all_tests()
-    for name, result in test_results.items():
-        print(f"- {name}: {result}")
-
-    # ── 5. Decision ────────────────────────────────────────────────────────────
-    print("\nDecision:")
-    classical_mse  = float(np.mean((y_true - y_pred) ** 2))
-    model_decision = decide_model(test_results, classical_mse)
-    print(f"  Selected model: {model_decision}")
-
-    # ── 6. Neural ODE ──────────────────────────────────────────────────────────
-    neural_y_pred       = None
-    neural_loss_history = None
-    neural_func         = None
-
-    if model_decision == "neural_ode":
-        print("\nTraining Neural ODE...")
-        state_dim = 2 if mismatch else 3
-
-        neural_solver = NeuralODESolver(
-            state_dim   = state_dim,
-            hidden_dim  = 64,
-            lr          = 1e-3,
-            epochs      = 800,
-            print_every = 100,
-            device      = "cpu",
-            mismatch    = mismatch,
-        )
-        neural_solver.fit(t, y_true, y0_clean=y0_clean)
-
-        print("Evaluating Neural ODE...")
-        neural_y_pred       = neural_solver.predict()
-        neural_loss_history = neural_solver.get_loss_history()
-        neural_func         = neural_solver.get_network()
-        print(f"  Neural ODE predictions shape: {neural_y_pred.shape}")
-
-    # ── 7. Metrics ─────────────────────────────────────────────────────────────
-    metrics_classical = compute_metrics(y_true, y_pred)
-    metrics_neural    = None
-    improvement_pct   = None
-
-    if neural_y_pred is not None:
-        metrics_neural = compute_metrics(y_true, neural_y_pred)
-        if metrics_classical["mse"] > 0:
-            improvement_pct = (
-                (metrics_classical["mse"] - metrics_neural["mse"])
-                / metrics_classical["mse"]
-            ) * 100.0
-        else:
-            improvement_pct = 0.0
-
-    print("\n===== FINAL RESULTS =====")
-    print("\nClassical Model:")
-    for k in ("mse", "rmse", "mae"):
-        print(f"  {k.upper()}: {metrics_classical[k]:.6f}")
-
-    print("\nNeural ODE:")
-    if metrics_neural:
-        for k in ("mse", "rmse", "mae"):
-            print(f"  {k.upper()}: {metrics_neural[k]:.6f}")
-    else:
-        print("  MSE/RMSE/MAE: N/A")
-
-    print("\nImprovement:")
-    if improvement_pct is not None:
-        print(f"  % improvement: {improvement_pct:.2f}%")
-    else:
-        print("  N/A")
-
-    # ── 8. Plots → stored as PNG buffers, not figure objects ──────────────────
-    print("\nGenerating plots...")
-    output_dir = "outputs"
     if save_plots:
-        os.makedirs(output_dir, exist_ok=True)
-
-    fig1, _ = plot_trajectory(t, y_true, y_pred, labels=dim_labels)
-    if save_plots:
-        fig1.savefig(os.path.join(output_dir, "trajectory_comparison.png"),
-                     dpi=100, bbox_inches="tight")
-    buf1 = _fig_to_buf(fig1)
-
-    fig2, _ = plot_residuals(t, residuals, labels=dim_labels)
-    if save_plots:
-        fig2.savefig(os.path.join(output_dir, "residuals.png"),
-                     dpi=100, bbox_inches="tight")
-    buf2 = _fig_to_buf(fig2)
-
-    buf3 = None
-    if neural_y_pred is not None:
-        fig3, _ = plot_model_comparison(t, y_true, y_pred, neural_y_pred)
-        if save_plots:
-            fig3.savefig(os.path.join(output_dir, "model_comparison.png"),
-                         dpi=100, bbox_inches="tight")
-        buf3 = _fig_to_buf(fig3)
-    else:
-        print("  Skipped: model_comparison.png (Neural ODE not selected)")
-
-    print("\n✓ Pipeline completed successfully!")
+        os.makedirs("outputs", exist_ok=True)
+        for plot_name, plot_buf in plots.items():
+            if plot_buf is None:
+                continue
+            with open(os.path.join("outputs", f"{plot_name}.png"), "wb") as handle:
+                handle.write(plot_buf.getvalue())
 
     return {
-        "decision":            model_decision,
-        "metrics_classical":   metrics_classical,
-        "metrics_neural":      metrics_neural,
-        "improvement_percent": improvement_pct,
-        "diagnostics": {
-            "test_results":  test_results,
+        "system": {
+            "key": system.key,
+            "name": system.name,
+            "description": system.description,
+            "stiffness": system.stiffness,
+            "labels": system.labels,
+            "t_span": system.t_span,
+        },
+        "decision": recommended_name,
+        "recommended_solver": _result_row(best, recommended_name) if best else None,
+        "recommendation_reason": _recommendation_reason(best, system),
+        "candidate_results": rows,
+        "diagnostics": diagnostics,
+        "plots": plots,
+        "t": t,
+        "y_reference": y_reference,
+        "y_observed": y_observed,
+        "train_fraction": train_fraction,
+        "noise_std": noise_std,
+    }
+
+
+def run_data_pipeline(t, y_observed, labels=None, config=None):
+    """
+    Run solver selection when the researcher has trajectory data but no RHS.
+
+    The uploaded data is treated as the evaluation target. Candidates are
+    trained on an initial time segment and scored on held-out future points.
+    """
+    config = config or {}
+    t = np.asarray(t, dtype=float)
+    y_observed = np.asarray(y_observed, dtype=float)
+
+    if y_observed.ndim == 1:
+        y_observed = y_observed.reshape(-1, 1)
+    if t.ndim != 1:
+        raise ValueError("t must be a 1D array.")
+    if len(t) != len(y_observed):
+        raise ValueError("t and y_observed must have the same number of rows.")
+    if len(t) < 12:
+        raise ValueError("Upload at least 12 rows for train/test evaluation.")
+    if not np.all(np.isfinite(t)) or not np.all(np.isfinite(y_observed)):
+        raise ValueError("Uploaded data contains non-finite values.")
+
+    order = np.argsort(t)
+    t = t[order]
+    y_observed = y_observed[order]
+    if np.any(np.diff(t) <= 0):
+        raise ValueError("Time values must be unique and strictly increasing after sorting.")
+
+    train_fraction = float(config.get("train_fraction", 0.7))
+    save_plots = bool(config.get("save_plots", True))
+    labels = labels or [f"state_{idx + 1}" for idx in range(y_observed.shape[1])]
+    train_mask, test_mask = _chronological_train_test(len(t), train_fraction)
+
+    results = [
+        run_cubic_spline_data(t, y_observed, train_mask, test_mask),
+        run_mlp_trajectory_data(t, y_observed, train_mask, test_mask),
+        run_sindy_polynomial_data(t, y_observed, train_mask, test_mask),
+    ]
+
+    best = choose_best(results)
+    recommended_name = best.name if best else None
+    rows = [_result_row(result, recommended_name) for result in results]
+    rows = sorted(rows, key=lambda row: float("inf") if row["MSE"] is None else row["MSE"])
+
+    diagnostics = None
+    if best and best.prediction is not None:
+        diag_engine = DiagnosticEngine(y_observed, best.prediction)
+        diagnostics = {
+            "test_results": diag_engine.run_all_tests(),
             "error_metrics": diag_engine.get_error_metrics(),
-        },
-        "plots": {
-            "trajectory":       buf1,
-            "residuals":        buf2,
-            "model_comparison": buf3,
-        },
-        "neural_loss_history": neural_loss_history,
-        "neural_final_pred":   neural_y_pred,
-        "neural_odefunc":      neural_func,
+            "residual_stats": diag_engine.get_residual_statistics(),
+        }
+
+    system_info = {
+        "key": "uploaded",
+        "name": "Uploaded trajectory data",
+        "description": "Data-only mode: no governing equation was supplied.",
+        "stiffness": "unknown",
+        "labels": labels,
+        "t_span": (float(t[0]), float(t[-1])),
+    }
+
+    plots = {
+        "trajectory": _plot_best_trajectory(t, y_observed, y_observed, best, labels),
+        "residuals": _plot_best_residuals(t, y_observed, best, labels),
+        "model_comparison": _plot_candidate_mse(results),
+    }
+
+    if save_plots:
+        os.makedirs("outputs", exist_ok=True)
+        for plot_name, plot_buf in plots.items():
+            if plot_buf is None:
+                continue
+            with open(os.path.join("outputs", f"{plot_name}.png"), "wb") as handle:
+                handle.write(plot_buf.getvalue())
+
+    return {
+        "system": system_info,
+        "decision": recommended_name,
+        "recommended_solver": _result_row(best, recommended_name) if best else None,
+        "recommendation_reason": _data_recommendation_reason(best),
+        "candidate_results": rows,
+        "diagnostics": diagnostics,
+        "plots": plots,
+        "t": t,
+        "y_reference": y_observed,
+        "y_observed": y_observed,
+        "train_fraction": train_fraction,
+        "noise_std": None,
     }
 
 
 if __name__ == "__main__":
-    run_pipeline({
-        "noise_std":  0.0,
-        "mismatch":   True,
-        "show_plots": False,
+    output = run_pipeline({
+        "system_key": "mismatch",
+        "noise_std": 0.0,
         "save_plots": True,
+        "include_pinn": False,
     })
+    print(output["recommended_solver"])

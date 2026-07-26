@@ -1,34 +1,19 @@
 import io
+
 import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
+matplotlib.use("Agg")
+import pandas as pd
 import streamlit as st
-from adaptive_ode.pipeline.run_pipeline import run_pipeline
 
+from adaptive_ode.pipeline.run_pipeline import run_data_pipeline, run_pipeline
+from adaptive_ode.systems import SYSTEMS
 
-SCENARIOS = {
-    "Clean Data": {
-        "noise_std": 0.0,
-        "mismatch": False,
-        "description": "No added noise and no model mismatch. This is the easiest case for the classical solver.",
-    },
-    "Noisy Data": {
-        "noise_std": 0.5,
-        "mismatch": False,
-        "description": "Adds observation noise while keeping the same underlying dynamics. Useful to test robustness under measurement error.",
-    },
-    "Model Mismatch": {
-        "noise_std": 0.0,
-        "mismatch": True,
-        "description": "Data is generated with a damped oscillator using true parameters. The classical solver uses wrong parameters, creating model mismatch. Neural ODE learns the true dynamics.",
-    },
-}
 
 DIAGNOSTIC_MEANINGS = {
-    "heteroscedasticity": "Checks whether residual variance changes with state/prediction level.",
-    "autocorrelation":    "Checks whether residuals remain temporally correlated.",
-    "non_stationary":     "Checks whether residual statistics drift over time.",
-    "state_dependence":   "Checks whether error magnitude depends on predicted state.",
+    "heteroscedasticity": "Residual variance changes with prediction level.",
+    "autocorrelation": "Residuals remain temporally correlated.",
+    "non_stationary": "Residual statistics drift over time.",
+    "state_dependence": "Error magnitude depends on predicted state.",
 }
 
 
@@ -42,149 +27,168 @@ def _buf_to_bytes(buf):
 def _show_plot(raw_bytes):
     if raw_bytes is None:
         return
-    st.image(io.BytesIO(raw_bytes), use_container_width=True)
+    st.image(io.BytesIO(raw_bytes), width="stretch")
 
 
-def _get_decision_message(results):
-    decision     = results["decision"]
-    tests        = results.get("diagnostics", {}).get("test_results", {})
-    failed_tests = [name for name, flagged in tests.items() if flagged]
-
-    if decision == "classical_ok":
-        if not failed_tests:
-            return "success", "Classical solver sufficient: residuals show no significant patterns."
-        return "success", "Classical solver sufficient: overall error is low enough despite minor diagnostic flags."
-
-    if failed_tests:
-        reasons = ", ".join(failed_tests)
-        return "warning", f"Neural ODE selected: residual diagnostics flagged: {reasons}."
-
-    return "warning", "Neural ODE selected: diagnostics indicate classical solver is insufficient."
-
-
-def _format_metrics_table(results):
-    classical = results["metrics_classical"]
-    neural    = results["metrics_neural"]
-    rows = []
-    for key, label in [("mse", "MSE"), ("rmse", "RMSE"), ("mae", "MAE")]:
-        rows.append({
-            "Metric":     label,
-            "Classical":  f"{classical[key]:.6f}",
-            "Neural ODE": f"{neural[key]:.6f}" if neural else "N/A",
+def _format_candidate_table(rows):
+    formatted = []
+    for row in rows:
+        formatted.append({
+            "Recommended": "Yes" if row["Recommended"] else "",
+            "Solver": row["Solver"],
+            "Family": row["Family"],
+            "Status": row["Status"],
+            "MSE": f"{row['MSE']:.6g}" if row["MSE"] is not None else "N/A",
+            "RMSE": f"{row['RMSE']:.6g}" if row["RMSE"] is not None else "N/A",
+            "MAE": f"{row['MAE']:.6g}" if row["MAE"] is not None else "N/A",
+            "Runtime (s)": f"{row['Runtime (s)']:.4f}",
         })
-    return rows
+    return formatted
 
 
 def _format_diagnostics_table(results):
-    tests = results.get("diagnostics", {}).get("test_results", {})
-    rows  = []
-    for name in ["heteroscedasticity", "autocorrelation", "non_stationary", "state_dependence"]:
+    tests = (results.get("diagnostics") or {}).get("test_results", {})
+    rows = []
+    for name, meaning in DIAGNOSTIC_MEANINGS.items():
         flagged = bool(tests.get(name, False))
         rows.append({
-            "Test":    name,
-            "Result":  "Fail" if flagged else "Pass",
-            "Meaning": DIAGNOSTIC_MEANINGS[name],
+            "Diagnostic": name,
+            "Result": "Flagged" if flagged else "Pass",
+            "Meaning": meaning,
         })
     return rows
 
 
 def main():
-    st.title("Adaptive ODE Solver")
+    st.title("Adaptive Solver Selection")
     st.caption(
-        "Simulates ODE trajectories, diagnoses residual behavior, "
-        "and adaptively chooses classical or Neural ODE modeling."
+        "Benchmarks classical, hybrid, and physics-informed candidates, "
+        "then recommends the solver with the best held-out performance."
     )
 
-    st.sidebar.header("Simulation Settings")
-    scenario = st.sidebar.selectbox(
-        "Select Scenario",
-        options=["Clean Data", "Noisy Data", "Model Mismatch"],
-    )
-    st.sidebar.write(SCENARIOS[scenario]["description"])
+    mode = st.sidebar.radio("Input mode", ["Built-in system", "Upload data"])
+    uploaded_file = None
+    time_column = None
+    state_columns = []
+    system_key = None
 
-    st.sidebar.markdown("---")
-    st.sidebar.subheader("Advanced Settings")
-    epochs = st.sidebar.slider(
-        "Neural ODE Training Epochs",
-        min_value=100,
-        max_value=800,
-        value=800,
-        step=100,
-        help="Reduce to 200-300 on cloud deployments for faster runs. Full 800 epochs recommended locally for best results.",
-    )
+    if mode == "Built-in system":
+        system_options = {system.name: key for key, system in SYSTEMS.items()}
+        st.sidebar.header("System")
+        system_name = st.sidebar.selectbox("Dynamical system", list(system_options.keys()))
+        system_key = system_options[system_name]
+        selected_system = SYSTEMS[system_key]
+        st.sidebar.write(selected_system.description)
+        st.sidebar.caption(f"Regime: {selected_system.stiffness}")
+    else:
+        st.sidebar.header("Upload Data")
+        uploaded_file = st.sidebar.file_uploader("CSV file", type=["csv"])
+        if uploaded_file is not None:
+            preview_df = pd.read_csv(uploaded_file)
+            uploaded_file.seek(0)
+            numeric_columns = list(preview_df.select_dtypes(include="number").columns)
+            if len(numeric_columns) >= 2:
+                time_column = st.sidebar.selectbox("Time column", numeric_columns, index=0)
+                default_states = [col for col in numeric_columns if col != time_column]
+                state_columns = st.sidebar.multiselect(
+                    "State columns",
+                    numeric_columns,
+                    default=default_states,
+                )
+                with st.expander("Uploaded Data Preview", expanded=False):
+                    st.dataframe(preview_df.head(20), width="stretch")
+            else:
+                st.sidebar.warning("CSV needs at least one time column and one state column.")
 
-    if epochs < 500:
-        st.sidebar.warning(
-            f"⚠️ {epochs} epochs may reduce Neural ODE accuracy. "
-            "800 epochs recommended for best results (local only)."
-        )
+    st.sidebar.header("Benchmark")
+    num_points = st.sidebar.slider("Trajectory points", 80, 500, 240, step=20)
+    train_fraction = st.sidebar.slider("Training fraction", 0.4, 0.85, 0.7, step=0.05)
+    noise_std = st.sidebar.slider("Observation noise", 0.0, 1.0, 0.0, step=0.05, disabled=mode == "Upload data")
+    include_pinn = st.sidebar.checkbox("Include PINN surrogate", value=False, disabled=mode == "Upload data")
+    pinn_epochs = st.sidebar.slider("PINN epochs", 50, 600, 200, step=50, disabled=not include_pinn)
 
-    run_clicked = st.sidebar.button("Run Simulation")
+    run_clicked = st.sidebar.button("Run Solver Selection")
 
     if run_clicked:
-        with st.spinner("Running simulation..."):
+        with st.spinner("Running solver candidates..."):
             try:
-                config = {
-                    "noise_std":  SCENARIOS[scenario]["noise_std"],
-                    "mismatch":   SCENARIOS[scenario]["mismatch"],
-                    "save_plots": False,
-                    "show_plots": False,
-                    "epochs":     epochs,
-                }
-                raw = run_pipeline(config)
-
+                if mode == "Upload data":
+                    if uploaded_file is None:
+                        st.error("Upload a CSV file first.")
+                        return
+                    if time_column is None or not state_columns:
+                        st.error("Select one time column and at least one state column.")
+                        return
+                    data_frame = pd.read_csv(uploaded_file)
+                    raw = run_data_pipeline(
+                        data_frame[time_column].to_numpy(),
+                        data_frame[state_columns].to_numpy(),
+                        labels=state_columns,
+                        config={
+                            "train_fraction": train_fraction,
+                            "save_plots": False,
+                        },
+                    )
+                else:
+                    raw = run_pipeline({
+                        "system_key": system_key,
+                        "noise_std": noise_std,
+                        "num_points": num_points,
+                        "train_fraction": train_fraction,
+                        "include_pinn": include_pinn,
+                        "pinn_epochs": pinn_epochs,
+                        "save_plots": False,
+                    })
                 raw["plots"] = {
-                    "trajectory":       _buf_to_bytes(raw["plots"]["trajectory"]),
-                    "residuals":        _buf_to_bytes(raw["plots"]["residuals"]),
+                    "trajectory": _buf_to_bytes(raw["plots"]["trajectory"]),
+                    "residuals": _buf_to_bytes(raw["plots"]["residuals"]),
                     "model_comparison": _buf_to_bytes(raw["plots"]["model_comparison"]),
                 }
-
-                st.session_state["results"]  = raw
-                st.session_state["scenario"] = scenario
+                st.session_state["results"] = raw
             except Exception as exc:
-                st.error(f"Simulation failed: {exc}")
+                st.error(f"Solver selection failed: {exc}")
                 return
 
     if "results" not in st.session_state:
-        st.info("Choose a scenario in the sidebar and click Run Simulation to view results.")
+        st.info("Choose a system and click Run Solver Selection.")
         return
 
-    results           = st.session_state["results"]
-    selected_scenario = st.session_state.get("scenario", scenario)
+    results = st.session_state["results"]
+    recommended = results["recommended_solver"]
+    system = results["system"]
 
-    st.subheader(f"Results: {selected_scenario}")
+    st.subheader(system["name"])
+    st.write(system["description"])
 
-    banner_type, decision_text = _get_decision_message(results)
-    if banner_type == "success":
-        st.success(decision_text)
-    else:
-        st.warning(decision_text)
+    if recommended is None:
+        st.error("No solver completed successfully.")
+        return
 
-    st.subheader("Metrics")
-    st.table(_format_metrics_table(results))
+    st.success(f"Recommended solver: {recommended['Solver']}")
+    st.write(results["recommendation_reason"])
 
-    if results["metrics_neural"] is None:
-        st.caption("Neural ODE metrics are N/A because the decision logic kept the classical solver.")
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Held-out MSE", f"{recommended['MSE']:.6g}")
+    col2.metric("Held-out RMSE", f"{recommended['RMSE']:.6g}")
+    col3.metric("Runtime", f"{recommended['Runtime (s)']:.4f}s")
 
-    if results["decision"] == "neural_ode" and results["improvement_percent"] is not None:
-        st.metric("Improvement % (MSE)", f"{results['improvement_percent']:.2f}%")
+    st.subheader("Candidate Ranking")
+    st.table(_format_candidate_table(results["candidate_results"]))
 
-    with st.expander("Diagnostics", expanded=False):
+    with st.expander("Diagnostics on Recommended Solver", expanded=False):
         st.table(_format_diagnostics_table(results))
 
+    with st.expander("Candidate Notes", expanded=False):
+        for row in results["candidate_results"]:
+            st.markdown(f"**{row['Solver']}**: {row['Notes']}")
+
     st.subheader("Plots")
-
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown("**Trajectory comparison**")
-        _show_plot(results["plots"]["trajectory"])
-    with col2:
-        st.markdown("**Residuals**")
-        _show_plot(results["plots"]["residuals"])
-
-    if results["decision"] == "neural_ode" and results["plots"]["model_comparison"] is not None:
-        st.markdown("**Model comparison (Classical vs Neural ODE)**")
-        _show_plot(results["plots"]["model_comparison"])
+    st.markdown("**Recommended trajectory**")
+    _show_plot(results["plots"]["trajectory"])
+    st.markdown("**Residuals**")
+    _show_plot(results["plots"]["residuals"])
+    st.markdown("**Solver ranking**")
+    _show_plot(results["plots"]["model_comparison"])
 
 
 main()
