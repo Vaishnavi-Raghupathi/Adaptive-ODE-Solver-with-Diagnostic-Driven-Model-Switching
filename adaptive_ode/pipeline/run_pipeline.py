@@ -165,26 +165,20 @@ def _plot_candidate_mse(results):
     return _fig_to_buf(fig)
 
 
-def run_pipeline(config=None):
-    """
-    Run a solver-selection benchmark for a built-in dynamical system.
+def _candidate_predictions(results):
+    return [
+        {
+            "name": result.name,
+            "family": result.family,
+            "status": result.status,
+            "prediction": result.prediction,
+        }
+        for result in results
+    ]
 
-    Parameters
-    ----------
-    config : dict
-        system_key      str    Built-in system key.
-        noise_std       float  Observation noise used for training data.
-        num_points      int    Number of trajectory points.
-        train_fraction  float  Initial fraction used to train neural candidates.
-        include_pinn    bool   Whether to run the PINN-style candidate.
-        pinn_epochs     int    PINN training epochs.
-        save_plots      bool   Save generated plots into outputs/.
-    """
+
+def _run_system_pipeline(system, config=None):
     config = config or {}
-
-    legacy_mismatch = bool(config.get("mismatch", False))
-    system_key = config.get("system_key") or ("mismatch" if legacy_mismatch else "lorenz")
-    system = get_system(system_key)
 
     noise_std = float(config.get("noise_std", 0.0))
     num_points = int(config.get("num_points", 300))
@@ -210,7 +204,7 @@ def run_pipeline(config=None):
 
     results.append(run_hybrid_residual(system, t, y_observed, y_reference, train_mask, test_mask))
 
-    if include_pinn:
+    if include_pinn and system.key in {"lorenz", "vanderpol", "robertson", "mismatch"}:
         results.append(
             run_pinn_surrogate(
                 system,
@@ -264,6 +258,7 @@ def run_pipeline(config=None):
         "recommended_solver": _result_row(best, recommended_name) if best else None,
         "recommendation_reason": _recommendation_reason(best, system),
         "candidate_results": rows,
+        "candidate_predictions": _candidate_predictions(results),
         "diagnostics": diagnostics,
         "plots": plots,
         "t": t,
@@ -272,6 +267,32 @@ def run_pipeline(config=None):
         "train_fraction": train_fraction,
         "noise_std": noise_std,
     }
+
+
+def run_pipeline(config=None):
+    """
+    Run a solver-selection benchmark for a built-in dynamical system.
+
+    Parameters
+    ----------
+    config : dict
+        system_key      str    Built-in system key.
+        noise_std       float  Observation noise used for training data.
+        num_points      int    Number of trajectory points.
+        train_fraction  float  Initial fraction used to train neural candidates.
+        include_pinn    bool   Whether to run the PINN-style candidate.
+        pinn_epochs     int    PINN training epochs.
+        save_plots      bool   Save generated plots into outputs/.
+    """
+    config = config or {}
+    legacy_mismatch = bool(config.get("mismatch", False))
+    system_key = config.get("system_key") or ("mismatch" if legacy_mismatch else "lorenz")
+    return _run_system_pipeline(get_system(system_key), config)
+
+
+def run_custom_pipeline(system, config=None):
+    """Run the standard known-equation benchmark for a custom system."""
+    return _run_system_pipeline(system, config)
 
 
 def run_data_pipeline(t, y_observed, labels=None, config=None):
@@ -356,6 +377,7 @@ def run_data_pipeline(t, y_observed, labels=None, config=None):
         "recommended_solver": _result_row(best, recommended_name) if best else None,
         "recommendation_reason": _data_recommendation_reason(best),
         "candidate_results": rows,
+        "candidate_predictions": _candidate_predictions(results),
         "diagnostics": diagnostics,
         "plots": plots,
         "t": t,

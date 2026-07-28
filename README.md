@@ -38,6 +38,26 @@ For uploaded data, the app runs data-driven candidates:
 
 Uploaded data is split chronologically: the first segment trains the data-driven models and the later segment is held out for evaluation.
 
+## Custom Equation Mode
+
+Researchers can enter their own dynamical system by specifying state variables, parameters, derivative equations, initial conditions, and time span. Expressions are parsed with a restricted SymPy parser and converted into a numerical right-hand side for the same solver-selection benchmark.
+
+Example:
+
+```text
+Variables: x, y, z
+Parameters: sigma=10, rho=28, beta=8/3
+Equations:
+sigma*(y - x)
+x*(rho - z) - y
+x*y - beta*z
+Initial condition: 1, 1, 1
+```
+
+## Interactive Results
+
+The app displays editable Plotly charts with selectable state dimensions, solver curves, residual views, log-scale ranking, hover inspection, and downloadable metrics CSV, trajectory CSV, and HTML plots.
+
 ## Run Locally
 
 ```bash
