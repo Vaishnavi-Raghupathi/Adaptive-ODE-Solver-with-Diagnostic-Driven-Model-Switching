@@ -1,0 +1,96 @@
+{
+  "recommended_solver": {
+    "Solver": "RK4 + residual NN",
+    "Family": "Hybrid correction",
+    "Status": "ok",
+    "MSE": 0.18691102182286493,
+    "RMSE": 0.4323320735532641,
+    "MAE": 0.3131582327064649,
+    "Runtime (s)": 0.4398,
+    "Recommended": true,
+    "Notes": "Learns held-out residual correction from observed training trajectory."
+  },
+  "recommendation_reason": "RK4 + residual NN produced the strongest held-out accuracy for this non-stiff / model mismatch system. The residual learner helped because the baseline physics has systematic error.",
+  "candidate_results": [
+    {
+      "Solver": "RK4 + residual NN",
+      "Family": "Hybrid correction",
+      "Status": "ok",
+      "MSE": 0.18691102182286493,
+      "RMSE": 0.4323320735532641,
+      "MAE": 0.3131582327064649,
+      "Runtime (s)": 0.4398,
+      "Recommended": true,
+      "Notes": "Learns held-out residual correction from observed training trajectory."
+    },
+    {
+      "Solver": "BDF",
+      "Family": "Classical implicit",
+      "Status": "ok",
+      "MSE": 1.7308626654540031,
+      "RMSE": 1.3156225391251106,
+      "MAE": 1.1078950309053317,
+      "Runtime (s)": 0.0319,
+      "Recommended": false,
+      "Notes": "SciPy BDF solve with moderate tolerances."
+    },
+    {
+      "Solver": "RK45",
+      "Family": "Classical explicit",
+      "Status": "ok",
+      "MSE": 1.730862962839395,
+      "RMSE": 1.3156226521458936,
+      "MAE": 1.1078951301904076,
+      "Runtime (s)": 0.0081,
+      "Recommended": false,
+      "Notes": "SciPy RK45 solve with moderate tolerances."
+    },
+    {
+      "Solver": "Radau",
+      "Family": "Classical implicit",
+      "Status": "ok",
+      "MSE": 1.7308631711603217,
+      "RMSE": 1.3156227313178812,
+      "MAE": 1.107895188689962,
+      "Runtime (s)": 0.0691,
+      "Recommended": false,
+      "Notes": "SciPy Radau solve with moderate tolerances."
+    },
+    {
+      "Solver": "DOP853",
+      "Family": "Classical explicit",
+      "Status": "ok",
+      "MSE": 1.7308634639359781,
+      "RMSE": 1.3156228425867262,
+      "MAE": 1.1078952843913827,
+      "Runtime (s)": 0.0038,
+      "Recommended": false,
+      "Notes": "SciPy DOP853 solve with moderate tolerances."
+    },
+    {
+      "Solver": "LSODA",
+      "Family": "Classical implicit",
+      "Status": "ok",
+      "MSE": 1.7308640219147287,
+      "RMSE": 1.3156230546454895,
+      "MAE": 1.1078954517927804,
+      "Runtime (s)": 0.0045,
+      "Recommended": false,
+      "Notes": "SciPy LSODA solve with moderate tolerances."
+    },
+    {
+      "Solver": "RK4",
+      "Family": "Classical explicit",
+      "Status": "ok",
+      "MSE": 1.7308701520670247,
+      "RMSE": 1.3156253843959627,
+      "MAE": 1.1078970866604325,
+      "Runtime (s)": 0.0038,
+      "Recommended": false,
+      "Notes": "Fixed-step fourth-order Runge-Kutta on the evaluation grid."
+    }
+  ],
+  "reference_max_abs_vs_analytical": 5.335032415842988e-10,
+  "evaluation_note": "Legacy two-way random split; selection and reported scores share held-out points. Not a final test estimate.",
+  "pinn_note": "PINN disabled for the baseline capture; PyTorch/torchdiffeq are not required for Days 1\u20135."
+}

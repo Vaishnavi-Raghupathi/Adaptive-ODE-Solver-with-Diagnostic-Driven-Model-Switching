@@ -1,0 +1,62 @@
+name: Prepare or publish release
+'on':
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Build artifacts only, or publish using a configured trusted publisher
+        required: true
+        default: artifacts
+        type: choice
+        options: [artifacts, testpypi, pypi]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install '.[research,demo,dev]'
+      - name: Require a matching version tag before publication
+        if: inputs.target != 'artifacts'
+        run: python -c "import os; from adaptive_ode import __version__; assert os.environ['GITHUB_REF'] == 'refs/tags/v' + __version__, 'Select a tag matching the package version'"
+      - run: python -m pytest -q
+        env:
+          MPLBACKEND: Agg
+          OPENBLAS_NUM_THREADS: '1'
+      - run: python -m build
+      - run: python -m twine check --strict dist/*
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-distributions
+          path: dist/*
+  testpypi:
+    if: inputs.target == 'testpypi'
+    needs: build
+    runs-on: ubuntu-latest
+    environment: testpypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-distributions
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+  pypi:
+    if: inputs.target == 'pypi'
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-distributions
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1

@@ -1,0 +1,14 @@
+{
+  "study_id": "classical_controls_v1",
+  "systems": [
+    "lorenz",
+    "vanderpol",
+    "robertson",
+    "mismatch"
+  ],
+  "num_points": 301,
+  "timing_repeats": 3,
+  "train_fraction": 0.6,
+  "validation_fraction": 0.2,
+  "max_nfev": 50000
+}

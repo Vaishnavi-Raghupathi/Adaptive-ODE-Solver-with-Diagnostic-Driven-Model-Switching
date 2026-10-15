@@ -1,0 +1,272 @@
+[
+  {
+    "method": "assumed_rk4",
+    "initial_state_index": 0,
+    "initial_state": [
+      1.0,
+      0.0
+    ],
+    "selected_on_original_validation": false,
+    "status": "ok",
+    "mse": 0.5221597079071743,
+    "rmse": 0.7226061914398286,
+    "mae": 0.5908629592965582,
+    "prediction_seconds": 0.009026249987073243,
+    "message": ""
+  },
+  {
+    "method": "assumed_dop853",
+    "initial_state_index": 0,
+    "initial_state": [
+      1.0,
+      0.0
+    ],
+    "selected_on_original_validation": false,
+    "status": "ok",
+    "mse": 0.5221591012878545,
+    "rmse": 0.7226057716956421,
+    "mae": 0.590862695911428,
+    "prediction_seconds": 0.006482415948994458,
+    "message": ""
+  },
+  {
+    "method": "calibrated_oscillator",
+    "initial_state_index": 0,
+    "initial_state": [
+      1.0,
+      0.0
+    ],
+    "selected_on_original_validation": false,
+    "status": "ok",
+    "mse": 0.8773590773735278,
+    "rmse": 0.9366744778062055,
+    "mae": 0.7481335624224418,
+    "prediction_seconds": 0.014126791036687791,
+    "message": ""
+  },
+  {
+    "method": "polynomial_correction",
+    "initial_state_index": 0,
+    "initial_state": [
+      1.0,
+      0.0
+    ],
+    "selected_on_original_validation": true,
+    "status": "ok",
+    "mse": 0.06810910609258698,
+    "rmse": 0.2609772137420947,
+    "mae": 0.20985878613370143,
+    "prediction_seconds": 0.017088832973968238,
+    "message": ""
+  },
+  {
+    "method": "trajectory_residual_nn",
+    "initial_state_index": 0,
+    "initial_state": [
+      1.0,
+      0.0
+    ],
+    "selected_on_original_validation": false,
+    "status": "not_supported",
+    "mse": null,
+    "rmse": null,
+    "mae": null,
+    "prediction_seconds": 0.0,
+    "message": ""
+  },
+  {
+    "method": "acceleration_residual_nn",
+    "initial_state_index": 0,
+    "initial_state": [
+      1.0,
+      0.0
+    ],
+    "selected_on_original_validation": false,
+    "status": "ok",
+    "mse": 1.2175186871796442,
+    "rmse": 1.1034122924726026,
+    "mae": 0.8179993897909167,
+    "prediction_seconds": 0.2601502080215141,
+    "message": ""
+  },
+  {
+    "method": "assumed_rk4",
+    "initial_state_index": 1,
+    "initial_state": [
+      3.0,
+      0.0
+    ],
+    "selected_on_original_validation": false,
+    "status": "ok",
+    "mse": 7.866799344388025,
+    "rmse": 2.804781514554748,
+    "mae": 2.196072214566463,
+    "prediction_seconds": 0.009157042019069195,
+    "message": ""
+  },
+  {
+    "method": "assumed_dop853",
+    "initial_state_index": 1,
+    "initial_state": [
+      3.0,
+      0.0
+    ],
+    "selected_on_original_validation": false,
+    "status": "ok",
+    "mse": 7.866796696946655,
+    "rmse": 2.804781042603264,
+    "mae": 2.196072028214582,
+    "prediction_seconds": 0.006760167016182095,
+    "message": ""
+  },
+  {
+    "method": "calibrated_oscillator",
+    "initial_state_index": 1,
+    "initial_state": [
+      3.0,
+      0.0
+    ],
+    "selected_on_original_validation": false,
+    "status": "ok",
+    "mse": 14.031255620367725,
+    "rmse": 3.7458317661592497,
+    "mae": 3.024961619598762,
+    "prediction_seconds": 0.014828249986749142,
+    "message": ""
+  },
+  {
+    "method": "polynomial_correction",
+    "initial_state_index": 1,
+    "initial_state": [
+      3.0,
+      0.0
+    ],
+    "selected_on_original_validation": true,
+    "status": "failed",
+    "mse": null,
+    "rmse": null,
+    "mae": null,
+    "prediction_seconds": 0.04449858301086351,
+    "message": "RuntimeError: Integration failed: Required step size is less than spacing between numbers."
+  },
+  {
+    "method": "trajectory_residual_nn",
+    "initial_state_index": 1,
+    "initial_state": [
+      3.0,
+      0.0
+    ],
+    "selected_on_original_validation": false,
+    "status": "not_supported",
+    "mse": null,
+    "rmse": null,
+    "mae": null,
+    "prediction_seconds": 0.0,
+    "message": ""
+  },
+  {
+    "method": "acceleration_residual_nn",
+    "initial_state_index": 1,
+    "initial_state": [
+      3.0,
+      0.0
+    ],
+    "selected_on_original_validation": false,
+    "status": "ok",
+    "mse": 8.03728829988269,
+    "rmse": 2.835011163978493,
+    "mae": 2.1696827626726964,
+    "prediction_seconds": 0.2636406249948777,
+    "message": ""
+  },
+  {
+    "method": "assumed_rk4",
+    "initial_state_index": 2,
+    "initial_state": [
+      2.0,
+      1.0
+    ],
+    "selected_on_original_validation": false,
+    "status": "ok",
+    "mse": 3.021511269919384,
+    "rmse": 1.7382494843719598,
+    "mae": 1.3830955102070703,
+    "prediction_seconds": 0.016770999995060265,
+    "message": ""
+  },
+  {
+    "method": "assumed_dop853",
+    "initial_state_index": 2,
+    "initial_state": [
+      2.0,
+      1.0
+    ],
+    "selected_on_original_validation": false,
+    "status": "ok",
+    "mse": 3.0215093220227116,
+    "rmse": 1.738248924067756,
+    "mae": 1.383095225948705,
+    "prediction_seconds": 0.015507582982536405,
+    "message": ""
+  },
+  {
+    "method": "calibrated_oscillator",
+    "initial_state_index": 2,
+    "initial_state": [
+      2.0,
+      1.0
+    ],
+    "selected_on_original_validation": false,
+    "status": "ok",
+    "mse": 0.4173238208633173,
+    "rmse": 0.6460060532714205,
+    "mae": 0.4590659060353905,
+    "prediction_seconds": 0.0325857910211198,
+    "message": ""
+  },
+  {
+    "method": "polynomial_correction",
+    "initial_state_index": 2,
+    "initial_state": [
+      2.0,
+      1.0
+    ],
+    "selected_on_original_validation": true,
+    "status": "ok",
+    "mse": 0.867558189744197,
+    "rmse": 0.9314280378774288,
+    "mae": 0.74611099134899,
+    "prediction_seconds": 0.0549808339565061,
+    "message": ""
+  },
+  {
+    "method": "trajectory_residual_nn",
+    "initial_state_index": 2,
+    "initial_state": [
+      2.0,
+      1.0
+    ],
+    "selected_on_original_validation": false,
+    "status": "not_supported",
+    "mse": null,
+    "rmse": null,
+    "mae": null,
+    "prediction_seconds": 0.0,
+    "message": ""
+  },
+  {
+    "method": "acceleration_residual_nn",
+    "initial_state_index": 2,
+    "initial_state": [
+      2.0,
+      1.0
+    ],
+    "selected_on_original_validation": false,
+    "status": "ok",
+    "mse": 2.4254192485397335,
+    "rmse": 1.5573757570155422,
+    "mae": 1.1096126209667763,
+    "prediction_seconds": 0.3200107080047019,
+    "message": ""
+  }
+]

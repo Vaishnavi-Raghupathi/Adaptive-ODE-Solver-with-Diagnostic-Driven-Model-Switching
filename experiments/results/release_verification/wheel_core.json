@@ -1,0 +1,31 @@
+[
+  {
+    "check": "core wheel outside checkout",
+    "status": "passed",
+    "output": {
+      "import_path": "/Users/vaishnaviraghupathi/Desktop/Hybrid-solver/Adaptive-ODE-Solver-with-Diagnostic-Driven-Model-Switching/.venv-wheel/lib/python3.13/site-packages/adaptive_ode/__init__.py",
+      "selected": "calibrated_oscillator",
+      "optional_dependencies_absent": true
+    }
+  },
+  {
+    "check": "01_known_equations",
+    "status": "passed",
+    "stdout": "calibrated_oscillator validation MSE: 7.378629763114205e-19 test MSE: 4.3079152309943423e-19\nrk4 validation MSE: 1.2856683755845126 test MSE: 0.8729959247396059\nbdf validation MSE: 1.285670045968486 test MSE: 0.8730057467384659\nrk45 validation MSE: 1.285670843886873 test MSE: 0.873005877233984\nradau validation MSE: 1.2856708946586781 test MSE: 0.87300588262806\ndop853 validation MSE: 1.285670901479523 test MSE: 0.8730058749603271\nlsoda validation MSE: 1.2856709596631442 test MSE: 0.8730058845813018\nSelected using validation only: calibrated_oscillator\n"
+  },
+  {
+    "check": "02_missing_physics",
+    "status": "passed",
+    "stdout": "Selected on original validation: polynomial_correction\nUnseen initial-state MSE (no refitting): 1.8029340999621074e-07\n"
+  },
+  {
+    "check": "03_time_series",
+    "status": "passed",
+    "stdout": "Selected on validation observations: polynomial_learned_ode\nTest targets are observations, not independently verified ground truth.\npolynomial_learned_ode ok 0.0023433193521285103\ncubic_spline ok 4041.7597240784444\n"
+  },
+  {
+    "check": "installed CLI outside checkout",
+    "status": "passed",
+    "stdout": "Validation selected: calibrated_oscillator\nResults: /Users/vaishnaviraghupathi/Desktop/Hybrid-solver/Adaptive-ODE-Solver-with-Diagnostic-Driven-Model-Switching/experiments/results/release_smoke/installed_cli\n"
+  }
+]

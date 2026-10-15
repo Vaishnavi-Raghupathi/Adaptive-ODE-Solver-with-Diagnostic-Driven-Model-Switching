@@ -1,0 +1,1272 @@
+{
+  "future_wins_vs_calibration": [
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "qualifying_seeds": 1,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "qualifying_seeds": 5,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "qualifying_seeds": 4,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "qualifying_seeds": 5,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "qualifying_seeds": 5,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "qualifying_seeds": 3,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "qualifying_seeds": 5,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "qualifying_seeds": 5,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "qualifying_seeds": 3,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "qualifying_seeds": 3,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    }
+  ],
+  "transfer_wins_vs_calibration": [
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "linear_mismatch",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "initial_state_index": 0,
+      "qualifying_seeds": 5,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "initial_state_index": 1,
+      "qualifying_seeds": 5,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "initial_state_index": 2,
+      "qualifying_seeds": 5,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "initial_state_index": 0,
+      "qualifying_seeds": 5,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "initial_state_index": 1,
+      "qualifying_seeds": 5,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 2,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.0,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "initial_state_index": 0,
+      "qualifying_seeds": 5,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "initial_state_index": 1,
+      "qualifying_seeds": 4,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "initial_state_index": 2,
+      "qualifying_seeds": 5,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "initial_state_index": 0,
+      "qualifying_seeds": 5,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "initial_state_index": 1,
+      "qualifying_seeds": 2,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "initial_state_index": 2,
+      "qualifying_seeds": 1,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 2,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.02,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "initial_state_index": 0,
+      "qualifying_seeds": 5,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "initial_state_index": 1,
+      "qualifying_seeds": 3,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "polynomial_correction",
+      "initial_state_index": 2,
+      "qualifying_seeds": 4,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 1,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 1,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 1,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "trajectory_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "initial_state_index": 0,
+      "qualifying_seeds": 3,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "initial_state_index": 1,
+      "qualifying_seeds": 2,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "polynomial_correction",
+      "initial_state_index": 2,
+      "qualifying_seeds": 2,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 0,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 1,
+      "qualifying_seeds": 2,
+      "total_seeds": 5
+    },
+    {
+      "system": "missing_cubic_force",
+      "noise_std": 0.1,
+      "train_stride": 4,
+      "method": "acceleration_residual_nn",
+      "initial_state_index": 2,
+      "qualifying_seeds": 0,
+      "total_seeds": 5
+    }
+  ],
+  "trial_failures": 21,
+  "trials_with_warnings": 0,
+  "validation_selections": {
+    "calibrated_oscillator": 34,
+    "polynomial_correction": 26
+  }
+}

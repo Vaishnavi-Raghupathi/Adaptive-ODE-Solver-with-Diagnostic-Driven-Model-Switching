@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "source": "day05_mismatch/source (archived source, not the live working tree)",
+  "source_files_hash_verified": 30,
+  "cases_reproduced": 25,
+  "arrays_equal_bit_for_bit": 325,
+  "compared": [
+    "selected methods",
+    "chosen variants",
+    "statuses",
+    "validation MSE",
+    "test metrics",
+    "fit details and NN loss curves",
+    "all NPZ arrays"
+  ],
+  "timing_comparison": "Excluded: wall-clock timing is not deterministic.",
+  "scope": "Same machine and isolated source directory using the same Python environment; not cross-platform verification.",
+  "original_config_sha256": "c4091402079c7b9aa0cfcefd9bb643d05b4be58e7451b6d846245e725a7cb611",
+  "reproduction_config_sha256": "c4091402079c7b9aa0cfcefd9bb643d05b4be58e7451b6d846245e725a7cb611"
+}

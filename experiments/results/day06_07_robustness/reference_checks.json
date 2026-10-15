@@ -1,0 +1,82 @@
+[
+  {
+    "system": "linear_mismatch",
+    "initial_state": [
+      2.0,
+      0.0
+    ],
+    "cross_check": "analytical versus DOP853",
+    "max_abs_difference": 4.8288706366861334e-11,
+    "mse_difference": 4.615539999605446e-22
+  },
+  {
+    "system": "linear_mismatch",
+    "initial_state": [
+      1.0,
+      0.0
+    ],
+    "cross_check": "analytical versus DOP853",
+    "max_abs_difference": 2.6183999413120773e-11,
+    "mse_difference": 1.1822975118722376e-22
+  },
+  {
+    "system": "linear_mismatch",
+    "initial_state": [
+      3.0,
+      0.0
+    ],
+    "cross_check": "analytical versus DOP853",
+    "max_abs_difference": 7.69344588036347e-11,
+    "mse_difference": 1.0254942989975017e-21
+  },
+  {
+    "system": "linear_mismatch",
+    "initial_state": [
+      2.0,
+      1.0
+    ],
+    "cross_check": "analytical versus DOP853",
+    "max_abs_difference": 5.488731691372095e-11,
+    "mse_difference": 5.11360000373983e-22
+  },
+  {
+    "system": "missing_cubic_force",
+    "initial_state": [
+      2.0,
+      0.0
+    ],
+    "cross_check": "DOP853 versus Radau",
+    "max_abs_difference": 5.416911363909094e-11,
+    "mse_difference": 1.793949809701024e-22
+  },
+  {
+    "system": "missing_cubic_force",
+    "initial_state": [
+      1.0,
+      0.0
+    ],
+    "cross_check": "DOP853 versus Radau",
+    "max_abs_difference": 5.312994488804179e-11,
+    "mse_difference": 3.6474591751557057e-23
+  },
+  {
+    "system": "missing_cubic_force",
+    "initial_state": [
+      3.0,
+      0.0
+    ],
+    "cross_check": "DOP853 versus Radau",
+    "max_abs_difference": 1.1309775338474992e-10,
+    "mse_difference": 1.4647425089205358e-21
+  },
+  {
+    "system": "missing_cubic_force",
+    "initial_state": [
+      2.0,
+      1.0
+    ],
+    "cross_check": "DOP853 versus Radau",
+    "max_abs_difference": 6.058309409695539e-11,
+    "mse_difference": 2.2896564598917856e-22
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "installed_import": "/Users/vaishnaviraghupathi/Desktop/Hybrid-solver/Adaptive-ODE-Solver-with-Diagnostic-Driven-Model-Switching/.venv-wheel/lib/python3.13/site-packages/adaptive_ode/__init__.py",
+  "checks": [
+    "ML extra and neural fit",
+    "plotting extra",
+    "custom-equation extra",
+    "bundled Streamlit demo and real benchmark"
+  ],
+  "selected": "calibrated_oscillator"
+}

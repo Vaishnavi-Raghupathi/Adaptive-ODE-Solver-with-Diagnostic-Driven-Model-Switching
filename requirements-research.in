@@ -1,0 +1,10 @@
+# Evaluation only; the Streamlit app continues to use requirements.txt.
+# requirements-research.lock records the environment used for the saved study.
+numpy
+scipy
+scikit-learn
+matplotlib
+statsmodels
+sympy
+pytest
+threadpoolctl

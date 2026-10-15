@@ -1,0 +1,9 @@
+{
+  "system_key": "mismatch",
+  "noise_std": 0.0,
+  "num_points": 300,
+  "train_fraction": 0.7,
+  "include_pinn": false,
+  "save_plots": false,
+  "seed": 7
+}

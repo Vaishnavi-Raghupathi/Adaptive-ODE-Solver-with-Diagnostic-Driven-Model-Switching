@@ -1,10 +1,10 @@
 """Safe custom dynamical-system parsing."""
 
+import ast
 import re
 
 import numpy as np
 import sympy as sp
-from sympy.parsing.sympy_parser import parse_expr, standard_transformations
 
 from adaptive_ode.systems import DynamicalSystem
 
@@ -21,12 +21,57 @@ ALLOWED_FUNCTIONS = {
     "E": sp.E,
 }
 
-SAFE_GLOBALS = {
-    "__builtins__": {},
-    "Integer": sp.Integer,
-    "Float": sp.Float,
-    "Rational": sp.Rational,
-}
+def _expression(text, symbols):
+    """Convert an arithmetic AST to SymPy without evaluating Python source."""
+    try:
+        tree = ast.parse(text, mode="eval")
+    except (SyntaxError, RecursionError) as error:
+        raise ValueError("Invalid equation expression.") from error
+    if sum(1 for _ in ast.walk(tree)) > 150:
+        raise ValueError("Expression is too complex.")
+
+    def convert(node):
+        if isinstance(node, ast.Constant) and type(node.value) in (int, float):
+            if not np.isfinite(float(node.value)) or abs(node.value) > 1e12:
+                raise ValueError("Numeric constants must be finite and have magnitude <= 1e12.")
+            return sp.sympify(node.value)
+        if isinstance(node, ast.Name):
+            if node.id not in symbols:
+                raise ValueError(f"Unknown symbol '{node.id}'.")
+            value = symbols[node.id]
+            if callable(value):
+                raise ValueError(f"Function '{node.id}' must be called.")
+            return value
+        if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.UAdd, ast.USub)):
+            value = convert(node.operand)
+            return value if isinstance(node.op, ast.UAdd) else -value
+        if isinstance(node, ast.BinOp):
+            left, right = convert(node.left), convert(node.right)
+            if isinstance(node.op, ast.Add):
+                return left + right
+            if isinstance(node.op, ast.Sub):
+                return left - right
+            if isinstance(node.op, ast.Mult):
+                return left * right
+            if isinstance(node.op, ast.Div):
+                return left / right
+            if isinstance(node.op, ast.Pow):
+                if not right.is_number or not right.is_real or abs(float(right)) > 16:
+                    raise ValueError("Powers require a real numeric exponent with magnitude <= 16.")
+                return left ** right
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
+            function = ALLOWED_FUNCTIONS.get(node.func.id)
+            if callable(function) and len(node.args) == 1 and not node.keywords:
+                return function(convert(node.args[0]))
+        raise ValueError("Only numeric arithmetic, declared symbols and allowed one-argument functions are supported.")
+
+    try:
+        expression = convert(tree.body)
+        if expression.has(sp.zoo, sp.oo, -sp.oo, sp.nan):
+            raise ValueError("Expression contains non-finite values.")
+        return expression
+    except (TypeError, ZeroDivisionError, OverflowError, RecursionError) as error:
+        raise ValueError("Invalid numeric expression.") from error
 
 
 def _split_csv(text):
@@ -52,13 +97,11 @@ def _parse_parameters(text):
         name = name.strip()
         if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", name):
             raise ValueError(f"Invalid parameter name '{name}'.")
-        params[name] = float(parse_expr(
-            raw_value.strip(),
-            local_dict=ALLOWED_FUNCTIONS,
-            global_dict=SAFE_GLOBALS,
-            transformations=standard_transformations,
-            evaluate=True,
-        ))
+        if name in ALLOWED_FUNCTIONS or name == "t" or name in params:
+            raise ValueError(f"Reserved or duplicate parameter name '{name}'.")
+        params[name] = float(_expression(raw_value.strip(), ALLOWED_FUNCTIONS))
+        if not np.isfinite(params[name]):
+            raise ValueError("Parameter values must be finite.")
     return params
 
 
@@ -79,14 +122,21 @@ def build_custom_system(
         if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", variable):
             raise ValueError(f"Invalid variable name '{variable}'.")
 
+    if len(set(variables)) != len(variables) or any(variable in ALLOWED_FUNCTIONS or variable == "t" for variable in variables):
+        raise ValueError("Variable names must be unique and cannot shadow time or allowed functions/constants.")
+
     equations = [line.strip() for line in equations_text.splitlines() if line.strip()]
     if len(equations) != len(variables):
         raise ValueError("Number of equations must match number of state variables.")
 
     params = _parse_parameters(parameters_text)
+    if set(params) & set(variables):
+        raise ValueError("Parameter names cannot overlap state variables.")
     y0 = _parse_float_list(initial_condition_text, len(variables), "Initial condition")
+    if not np.all(np.isfinite(y0)):
+        raise ValueError("Initial conditions must be finite.")
     t_span = (float(t_start), float(t_end))
-    if t_span[1] <= t_span[0]:
+    if not np.all(np.isfinite(t_span)) or t_span[1] <= t_span[0]:
         raise ValueError("End time must be greater than start time.")
 
     variable_symbols = {name: sp.Symbol(name) for name in variables}
@@ -101,13 +151,7 @@ def build_custom_system(
 
     parsed_equations = []
     for equation in equations:
-        expression = parse_expr(
-            equation,
-            local_dict=local_dict,
-            global_dict=SAFE_GLOBALS,
-            transformations=standard_transformations,
-            evaluate=True,
-        )
+        expression = _expression(equation, local_dict)
         unknown_symbols = expression.free_symbols - allowed_symbols
         if unknown_symbols:
             names = ", ".join(sorted(str(symbol) for symbol in unknown_symbols))

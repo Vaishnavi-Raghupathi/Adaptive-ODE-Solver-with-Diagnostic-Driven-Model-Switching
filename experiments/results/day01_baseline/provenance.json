@@ -1,0 +1,28 @@
+{
+  "started_at_utc": "2026-10-15T13:10:28.979617+00:00",
+  "python": "3.13.12 (main, Feb  3 2026, 17:53:27) [Clang 17.0.0 (clang-1700.6.3.2)]",
+  "platform": "macOS-15.5-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "processor": "arm",
+  "git_commit": "26a1502db1d97a604e04ba495d042fab5a0c5785",
+  "git_status": "M .gitignore\n?? adaptive_ode/experiments/\n?? docs/\n?? experiments/\n?? requirements-research.in\n?? requirements-research.lock\n?? tests/",
+  "config_sha256": "0f39c84409bf5f7eee8eac75992f9ea1386b684da59a2bcdc30bd631efc8cd3a",
+  "command": [
+    "/Users/vaishnaviraghupathi/Desktop/Hybrid-solver/Adaptive-ODE-Solver-with-Diagnostic-Driven-Model-Switching/adaptive_ode/experiments/capture_baseline.py",
+    "--output",
+    "experiments/results/day01_baseline"
+  ],
+  "threadpools": [
+    {
+      "user_api": "openmp",
+      "internal_api": "openmp",
+      "num_threads": 1,
+      "prefix": "libomp",
+      "filepath": "/Users/vaishnaviraghupathi/Desktop/Hybrid-solver/Adaptive-ODE-Solver-with-Diagnostic-Driven-Model-Switching/.venv/lib/python3.13/site-packages/sklearn/.dylibs/libomp.dylib",
+      "version": null
+    }
+  ],
+  "status": "complete",
+  "completed_at_utc": "2026-10-15T13:10:30.530648+00:00",
+  "elapsed_seconds": 1.5315796670038253
+}

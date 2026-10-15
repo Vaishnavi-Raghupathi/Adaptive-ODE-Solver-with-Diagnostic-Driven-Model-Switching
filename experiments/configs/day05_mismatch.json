@@ -1,0 +1,22 @@
+{
+  "study_id": "day05_parameter_mismatch_v1",
+  "protocol_version": 1,
+  "t_span": [0.0, 20.0],
+  "num_points": 401,
+  "initial_state": [2.0, 0.0],
+  "true_parameters": {"damping": 0.1, "stiffness": 4.0},
+  "wrong_parameters": {"damping": 0.5, "stiffness": 3.0},
+  "mismatch_levels": [0.0, 0.25, 0.5, 0.75, 1.0],
+  "seeds": [7, 17, 27, 37, 47],
+  "noise_std": 0.0,
+  "train_fraction": 0.6,
+  "validation_fraction": 0.2,
+  "nn": {
+    "hidden_layer_sizes": [64, 64],
+    "activation": "tanh",
+    "solver": "adam",
+    "learning_rate_init": 0.001,
+    "max_iter": 1200,
+    "alphas": [0.0001, 0.01]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "hybrid_helpful_seed_counts": {
+    "0.0": 0,
+    "0.25": 0,
+    "0.5": 0,
+    "0.75": 0,
+    "1.0": 0
+  },
+  "criterion": "At least 10% lower test MSE and absolute improvement >= 1e-8 versus both assumed RK4 and fitted DOP853, in >=80% of seeds at a level.",
+  "validation_selections": {
+    "assumed_dop853_tight": 5,
+    "fitted_dop853": 20
+  },
+  "failed_attempts": 0,
+  "nn_attempts_with_convergence_warning": 0,
+  "nn_attempts": 50
+}

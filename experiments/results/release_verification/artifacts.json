@@ -1,0 +1,34 @@
+{
+  "status": "passed",
+  "version": "0.1.0",
+  "distribution": "adaptive-solver-bench",
+  "base_dependencies": [
+    "numpy<3,>=1.26",
+    "scipy<2,>=1.11"
+  ],
+  "final_wheel_python_files_matching_tested_install": 36,
+  "core_install": "Fresh virtual environment, outside checkout; no sklearn, torch, or streamlit present.",
+  "extras_install": "ML, plots, custom equations and bundled demo tested in installed environment.",
+  "tutorials": "All three executed against the installed wheel outside the checkout.",
+  "metadata_check": "python -m twine check --strict: wheel and source distribution passed.",
+  "source_distribution": "Tutorials, sample data, tests, docs and workflows present; archived results excluded.",
+  "tests": {
+    "passed": 71,
+    "failed": 0,
+    "skipped": 0
+  },
+  "ci_workflows": "Configured and YAML-parsed locally; not pushed or executed on GitHub.",
+  "public_index_publication": "Not performed. Proposed PyPI name lookup returned HTTP 404; not reserved.",
+  "artifacts": [
+    {
+      "file": "dist/adaptive_solver_bench-0.1.0-py3-none-any.whl",
+      "bytes": 71596,
+      "sha256": "a84631dc6db6c590f02b7c428ae79343f737781c3645fea842522b8ceaef30f9"
+    },
+    {
+      "file": "dist/adaptive_solver_bench-0.1.0.tar.gz",
+      "bytes": 100815,
+      "sha256": "29fb3b292bb11e1de36e558b9c7eabb45199ca28c857d71dfec1c327db41265f"
+    }
+  ]
+}

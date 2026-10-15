@@ -1,0 +1,32 @@
+{
+  "started_at_utc": "2026-10-15T13:11:32.657581+00:00",
+  "python": "3.13.12 (main, Feb  3 2026, 17:53:27) [Clang 17.0.0 (clang-1700.6.3.2)]",
+  "platform": "macOS-15.5-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "processor": "arm",
+  "git_commit": "26a1502db1d97a604e04ba495d042fab5a0c5785",
+  "git_status": "M .gitignore\n M README.md\n?? adaptive_ode/experiments/\n?? docs/\n?? experiments/\n?? requirements-research.in\n?? requirements-research.lock\n?? tests/",
+  "config_sha256": "c4091402079c7b9aa0cfcefd9bb643d05b4be58e7451b6d846245e725a7cb611",
+  "command": [
+    "/Users/vaishnaviraghupathi/Desktop/Hybrid-solver/Adaptive-ODE-Solver-with-Diagnostic-Driven-Model-Switching/adaptive_ode/experiments/mismatch.py",
+    "--config",
+    "experiments/configs/day05_mismatch.json",
+    "--output",
+    "experiments/results/day05_mismatch"
+  ],
+  "threadpools": [
+    {
+      "user_api": "openmp",
+      "internal_api": "openmp",
+      "num_threads": 1,
+      "prefix": "libomp",
+      "filepath": "/Users/vaishnaviraghupathi/Desktop/Hybrid-solver/Adaptive-ODE-Solver-with-Diagnostic-Driven-Model-Switching/.venv/lib/python3.13/site-packages/sklearn/.dylibs/libomp.dylib",
+      "version": null
+    }
+  ],
+  "status": "complete",
+  "completed_at_utc": "2026-10-15T13:11:46.051811+00:00",
+  "elapsed_seconds": 13.363243750005495,
+  "cases": 25,
+  "failed_attempts": 0
+}

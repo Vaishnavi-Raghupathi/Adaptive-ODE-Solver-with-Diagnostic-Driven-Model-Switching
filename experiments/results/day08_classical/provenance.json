@@ -1,0 +1,22 @@
+{
+  "started_at_utc": "2026-10-15T13:57:32.384354+00:00",
+  "python": "3.13.12 (main, Feb  3 2026, 17:53:27) [Clang 17.0.0 (clang-1700.6.3.2)]",
+  "platform": "macOS-15.5-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "processor": "arm",
+  "git_commit": "26a1502db1d97a604e04ba495d042fab5a0c5785",
+  "git_status": "M .gitignore\n M README.md\n M adaptive_ode/__init__.py\n M app.py\n?? MANIFEST.in\n?? adaptive_ode/__main__.py\n?? adaptive_ode/api.py\n?? adaptive_ode/cli.py\n?? adaptive_ode/core.py\n?? adaptive_ode/demo.py\n?? adaptive_ode/experiments/\n?? adaptive_ode/methods.py\n?? adaptive_ode/ml_methods.py\n?? adaptive_ode/numerics.py\n?? docs/\n?? experiments/\n?? legacy_app.py\n?? pyproject.toml\n?? pytest.ini\n?? requirements-dev.lock\n?? requirements-research.in\n?? requirements-research.lock\n?? tests/",
+  "config_sha256": "762750e6f65ff7b6af5aed4b53362e9d3df14f05a2f9b5cb642766447a6f4da7",
+  "command": [
+    "/Users/vaishnaviraghupathi/Desktop/Hybrid-solver/Adaptive-ODE-Solver-with-Diagnostic-Driven-Model-Switching/adaptive_ode/experiments/classical_controls.py",
+    "--config",
+    "experiments/configs/day08_classical.json",
+    "--output",
+    "experiments/results/day08_classical"
+  ],
+  "threadpools": [],
+  "status": "complete",
+  "completed_at_utc": "2026-10-15T13:57:45.820087+00:00",
+  "elapsed_seconds": 13.40948287496576,
+  "failed_predictions": 9
+}

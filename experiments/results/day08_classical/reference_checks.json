@@ -1,0 +1,26 @@
+[
+  {
+    "system": "lorenz",
+    "reference_kind": "numerical reference (DOP853)",
+    "alternate_method": "Radau",
+    "max_abs_difference": 8.959304409472679e-10
+  },
+  {
+    "system": "vanderpol",
+    "reference_kind": "numerical reference (Radau)",
+    "alternate_method": "DOP853",
+    "max_abs_difference": 4.319611335290574e-10
+  },
+  {
+    "system": "robertson",
+    "reference_kind": "numerical reference (Radau)",
+    "alternate_method": "BDF",
+    "max_abs_difference": 9.07950936657187e-11
+  },
+  {
+    "system": "mismatch",
+    "reference_kind": "analytical reference",
+    "alternate_method": "DOP853",
+    "max_abs_difference": 5.904032818193627e-11
+  }
+]

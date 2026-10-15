@@ -1,0 +1,22 @@
+{
+  "started_at_utc": "2026-10-15T13:54:07.133624+00:00",
+  "python": "3.13.12 (main, Feb  3 2026, 17:53:27) [Clang 17.0.0 (clang-1700.6.3.2)]",
+  "platform": "macOS-15.5-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "processor": "arm",
+  "git_commit": "26a1502db1d97a604e04ba495d042fab5a0c5785",
+  "git_status": "M .gitignore\n M README.md\n M adaptive_ode/__init__.py\n?? adaptive_ode/api.py\n?? adaptive_ode/core.py\n?? adaptive_ode/experiments/\n?? adaptive_ode/methods.py\n?? adaptive_ode/ml_methods.py\n?? adaptive_ode/numerics.py\n?? docs/\n?? experiments/\n?? pytest.ini\n?? requirements-dev.lock\n?? requirements-research.in\n?? requirements-research.lock\n?? tests/",
+  "config_sha256": "35eb9138a64d17ca0658abd65f35431b31a80b0bc590d7167ce687e4d38091c0",
+  "command": [
+    "/Users/vaishnaviraghupathi/Desktop/Hybrid-solver/Adaptive-ODE-Solver-with-Diagnostic-Driven-Model-Switching/adaptive_ode/experiments/robustness.py",
+    "--config",
+    "experiments/configs/day06_07_robustness.json",
+    "--output",
+    "experiments/results/day06_07_robustness"
+  ],
+  "threadpools": [],
+  "status": "complete",
+  "completed_at_utc": "2026-10-15T13:56:35.279244+00:00",
+  "elapsed_seconds": 148.12150187499356,
+  "cases": 60
+}

@@ -1,0 +1,61 @@
+name: Tests and package build
+'on':
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python: ['3.11', '3.12', '3.13']
+        include:
+          - os: macos-latest
+            python: '3.13'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - run: python -m pip install '.[research,demo,dev]'
+      - run: python -m pytest --cov=adaptive_ode --cov-report=xml
+        env:
+          MPLBACKEND: Agg
+          OPENBLAS_NUM_THREADS: '1'
+          OMP_NUM_THREADS: '1'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.os }}-${{ matrix.python }}
+          path: coverage.xml
+  distributions:
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install build twine
+      - run: python -m build
+      - run: python -m twine check --strict dist/*
+      - name: Install wheel in a clean environment and run examples outside the checkout
+        shell: bash
+        run: |
+          python -m venv "$RUNNER_TEMP/wheel-env"
+          wheel_path=$(realpath dist/*.whl)
+          "$RUNNER_TEMP/wheel-env/bin/python" -m pip install "$wheel_path"
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/wheel-env/bin/python" -I -c "from adaptive_ode import benchmark; import sys; assert 'sklearn' not in sys.modules; assert benchmark().selected_method == 'calibrated_oscillator'"
+          "$RUNNER_TEMP/wheel-env/bin/python" "$GITHUB_WORKSPACE/examples/01_known_equations.py" --output "$RUNNER_TEMP/tutorial-equations"
+          "$RUNNER_TEMP/wheel-env/bin/python" "$GITHUB_WORKSPACE/examples/02_missing_physics.py" --output "$RUNNER_TEMP/tutorial-mismatch"
+          "$RUNNER_TEMP/wheel-env/bin/python" "$GITHUB_WORKSPACE/examples/03_time_series.py" --output "$RUNNER_TEMP/tutorial-data"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: distributions
+          path: dist/*

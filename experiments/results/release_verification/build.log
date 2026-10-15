@@ -1,0 +1,316 @@
+* Creating isolated environment: venv+pip...
+* Installing packages in isolated environment:
+  - setuptools>=77.0.3
+* Getting build dependencies for sdist...
+running egg_info
+writing adaptive_solver_bench.egg-info/PKG-INFO
+writing dependency_links to adaptive_solver_bench.egg-info/dependency_links.txt
+writing entry points to adaptive_solver_bench.egg-info/entry_points.txt
+writing requirements to adaptive_solver_bench.egg-info/requires.txt
+writing top-level names to adaptive_solver_bench.egg-info/top_level.txt
+reading manifest file 'adaptive_solver_bench.egg-info/SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+no previously-included directories found matching 'experiments/results'
+warning: no previously-included files matching '__pycache__' found anywhere in distribution
+warning: no previously-included files matching '*.py[cod]' found anywhere in distribution
+warning: no previously-included files matching '.DS_Store' found anywhere in distribution
+adding license file 'LICENSE'
+writing manifest file 'adaptive_solver_bench.egg-info/SOURCES.txt'
+* Installed build dependency versions:
+  - setuptools==84.0.0
+* Building sdist...
+running sdist
+running egg_info
+writing adaptive_solver_bench.egg-info/PKG-INFO
+writing dependency_links to adaptive_solver_bench.egg-info/dependency_links.txt
+writing entry points to adaptive_solver_bench.egg-info/entry_points.txt
+writing requirements to adaptive_solver_bench.egg-info/requires.txt
+writing top-level names to adaptive_solver_bench.egg-info/top_level.txt
+reading manifest file 'adaptive_solver_bench.egg-info/SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+no previously-included directories found matching 'experiments/results'
+warning: no previously-included files matching '__pycache__' found anywhere in distribution
+warning: no previously-included files matching '*.py[cod]' found anywhere in distribution
+warning: no previously-included files matching '.DS_Store' found anywhere in distribution
+adding license file 'LICENSE'
+writing manifest file 'adaptive_solver_bench.egg-info/SOURCES.txt'
+running check
+creating adaptive_solver_bench-0.1.0
+creating adaptive_solver_bench-0.1.0/.github/workflows
+creating adaptive_solver_bench-0.1.0/adaptive_ode
+creating adaptive_solver_bench-0.1.0/adaptive_ode/decision
+creating adaptive_solver_bench-0.1.0/adaptive_ode/diagnostics
+creating adaptive_solver_bench-0.1.0/adaptive_ode/evaluation
+creating adaptive_solver_bench-0.1.0/adaptive_ode/experiments
+creating adaptive_solver_bench-0.1.0/adaptive_ode/pipeline
+creating adaptive_solver_bench-0.1.0/adaptive_ode/solvers
+creating adaptive_solver_bench-0.1.0/adaptive_ode/utils
+creating adaptive_solver_bench-0.1.0/adaptive_solver_bench.egg-info
+creating adaptive_solver_bench-0.1.0/docs
+creating adaptive_solver_bench-0.1.0/examples
+creating adaptive_solver_bench-0.1.0/examples/data
+creating adaptive_solver_bench-0.1.0/experiments/configs
+creating adaptive_solver_bench-0.1.0/tests
+copying files to adaptive_solver_bench-0.1.0...
+copying CHANGELOG.md -> adaptive_solver_bench-0.1.0
+copying LICENSE -> adaptive_solver_bench-0.1.0
+copying MANIFEST.in -> adaptive_solver_bench-0.1.0
+copying README.md -> adaptive_solver_bench-0.1.0
+copying app.py -> adaptive_solver_bench-0.1.0
+copying legacy_app.py -> adaptive_solver_bench-0.1.0
+copying pyproject.toml -> adaptive_solver_bench-0.1.0
+copying pytest.ini -> adaptive_solver_bench-0.1.0
+copying requirements-dev.lock -> adaptive_solver_bench-0.1.0
+copying requirements-legacy.txt -> adaptive_solver_bench-0.1.0
+copying requirements-research.in -> adaptive_solver_bench-0.1.0
+copying requirements-research.lock -> adaptive_solver_bench-0.1.0
+copying requirements.txt -> adaptive_solver_bench-0.1.0
+copying .github/workflows/ci.yml -> adaptive_solver_bench-0.1.0/.github/workflows
+copying .github/workflows/release.yml -> adaptive_solver_bench-0.1.0/.github/workflows
+copying adaptive_ode/__init__.py -> adaptive_solver_bench-0.1.0/adaptive_ode
+copying adaptive_ode/__main__.py -> adaptive_solver_bench-0.1.0/adaptive_ode
+copying adaptive_ode/api.py -> adaptive_solver_bench-0.1.0/adaptive_ode
+copying adaptive_ode/cli.py -> adaptive_solver_bench-0.1.0/adaptive_ode
+copying adaptive_ode/core.py -> adaptive_solver_bench-0.1.0/adaptive_ode
+copying adaptive_ode/custom_system.py -> adaptive_solver_bench-0.1.0/adaptive_ode
+copying adaptive_ode/demo.py -> adaptive_solver_bench-0.1.0/adaptive_ode
+copying adaptive_ode/methods.py -> adaptive_solver_bench-0.1.0/adaptive_ode
+copying adaptive_ode/ml_methods.py -> adaptive_solver_bench-0.1.0/adaptive_ode
+copying adaptive_ode/numerics.py -> adaptive_solver_bench-0.1.0/adaptive_ode
+copying adaptive_ode/oscillator.py -> adaptive_solver_bench-0.1.0/adaptive_ode
+copying adaptive_ode/systems.py -> adaptive_solver_bench-0.1.0/adaptive_ode
+copying adaptive_ode/decision/__init__.py -> adaptive_solver_bench-0.1.0/adaptive_ode/decision
+copying adaptive_ode/decision/rules.py -> adaptive_solver_bench-0.1.0/adaptive_ode/decision
+copying adaptive_ode/diagnostics/__init__.py -> adaptive_solver_bench-0.1.0/adaptive_ode/diagnostics
+copying adaptive_ode/diagnostics/engine.py -> adaptive_solver_bench-0.1.0/adaptive_ode/diagnostics
+copying adaptive_ode/diagnostics/statistical_tests.py -> adaptive_solver_bench-0.1.0/adaptive_ode/diagnostics
+copying adaptive_ode/evaluation/__init__.py -> adaptive_solver_bench-0.1.0/adaptive_ode/evaluation
+copying adaptive_ode/evaluation/metrics.py -> adaptive_solver_bench-0.1.0/adaptive_ode/evaluation
+copying adaptive_ode/evaluation/plotting.py -> adaptive_solver_bench-0.1.0/adaptive_ode/evaluation
+copying adaptive_ode/experiments/__init__.py -> adaptive_solver_bench-0.1.0/adaptive_ode/experiments
+copying adaptive_ode/experiments/artifacts.py -> adaptive_solver_bench-0.1.0/adaptive_ode/experiments
+copying adaptive_ode/experiments/capture_baseline.py -> adaptive_solver_bench-0.1.0/adaptive_ode/experiments
+copying adaptive_ode/experiments/classical_controls.py -> adaptive_solver_bench-0.1.0/adaptive_ode/experiments
+copying adaptive_ode/experiments/mismatch.py -> adaptive_solver_bench-0.1.0/adaptive_ode/experiments
+copying adaptive_ode/experiments/oscillator.py -> adaptive_solver_bench-0.1.0/adaptive_ode/experiments
+copying adaptive_ode/experiments/reporting.py -> adaptive_solver_bench-0.1.0/adaptive_ode/experiments
+copying adaptive_ode/experiments/robustness.py -> adaptive_solver_bench-0.1.0/adaptive_ode/experiments
+copying adaptive_ode/pipeline/__init__.py -> adaptive_solver_bench-0.1.0/adaptive_ode/pipeline
+copying adaptive_ode/pipeline/run_pipeline.py -> adaptive_solver_bench-0.1.0/adaptive_ode/pipeline
+copying adaptive_ode/solvers/__init__.py -> adaptive_solver_bench-0.1.0/adaptive_ode/solvers
+copying adaptive_ode/solvers/candidates.py -> adaptive_solver_bench-0.1.0/adaptive_ode/solvers
+copying adaptive_ode/solvers/classical.py -> adaptive_solver_bench-0.1.0/adaptive_ode/solvers
+copying adaptive_ode/solvers/neural_ode.py -> adaptive_solver_bench-0.1.0/adaptive_ode/solvers
+copying adaptive_ode/utils/__init__.py -> adaptive_solver_bench-0.1.0/adaptive_ode/utils
+copying adaptive_ode/utils/data_loader.py -> adaptive_solver_bench-0.1.0/adaptive_ode/utils
+copying adaptive_solver_bench.egg-info/PKG-INFO -> adaptive_solver_bench-0.1.0/adaptive_solver_bench.egg-info
+copying adaptive_solver_bench.egg-info/SOURCES.txt -> adaptive_solver_bench-0.1.0/adaptive_solver_bench.egg-info
+copying adaptive_solver_bench.egg-info/dependency_links.txt -> adaptive_solver_bench-0.1.0/adaptive_solver_bench.egg-info
+copying adaptive_solver_bench.egg-info/entry_points.txt -> adaptive_solver_bench-0.1.0/adaptive_solver_bench.egg-info
+copying adaptive_solver_bench.egg-info/requires.txt -> adaptive_solver_bench-0.1.0/adaptive_solver_bench.egg-info
+copying adaptive_solver_bench.egg-info/top_level.txt -> adaptive_solver_bench-0.1.0/adaptive_solver_bench.egg-info
+copying docs/api.md -> adaptive_solver_bench-0.1.0/docs
+copying docs/classical_protocol.md -> adaptive_solver_bench-0.1.0/docs
+copying docs/day01_audit.md -> adaptive_solver_bench-0.1.0/docs
+copying docs/day01_day05_summary.md -> adaptive_solver_bench-0.1.0/docs
+copying docs/days06_14_summary.md -> adaptive_solver_bench-0.1.0/docs
+copying docs/experiment_protocol.md -> adaptive_solver_bench-0.1.0/docs
+copying docs/extensions.md -> adaptive_solver_bench-0.1.0/docs
+copying docs/releasing.md -> adaptive_solver_bench-0.1.0/docs
+copying docs/robustness_protocol.md -> adaptive_solver_bench-0.1.0/docs
+copying docs/tutorials.md -> adaptive_solver_bench-0.1.0/docs
+copying examples/01_known_equations.py -> adaptive_solver_bench-0.1.0/examples
+copying examples/02_missing_physics.py -> adaptive_solver_bench-0.1.0/examples
+copying examples/03_time_series.py -> adaptive_solver_bench-0.1.0/examples
+copying examples/data/oscillator.csv -> adaptive_solver_bench-0.1.0/examples/data
+copying experiments/configs/day05_mismatch.json -> adaptive_solver_bench-0.1.0/experiments/configs
+copying experiments/configs/day06_07_robustness.json -> adaptive_solver_bench-0.1.0/experiments/configs
+copying experiments/configs/day08_classical.json -> adaptive_solver_bench-0.1.0/experiments/configs
+copying tests/test_cli_demo.py -> adaptive_solver_bench-0.1.0/tests
+copying tests/test_custom_system.py -> adaptive_solver_bench-0.1.0/tests
+copying tests/test_public_api.py -> adaptive_solver_bench-0.1.0/tests
+copying tests/test_research_baselines.py -> adaptive_solver_bench-0.1.0/tests
+copying tests/test_robustness.py -> adaptive_solver_bench-0.1.0/tests
+Writing adaptive_solver_bench-0.1.0/setup.cfg
+Creating tar archive
+removing 'adaptive_solver_bench-0.1.0' (and everything under it)
+* Building wheel from sdist
+* Creating isolated environment: venv+pip...
+* Installing packages in isolated environment:
+  - setuptools>=77.0.3
+* Getting build dependencies for wheel...
+running egg_info
+writing adaptive_solver_bench.egg-info/PKG-INFO
+writing dependency_links to adaptive_solver_bench.egg-info/dependency_links.txt
+writing entry points to adaptive_solver_bench.egg-info/entry_points.txt
+writing requirements to adaptive_solver_bench.egg-info/requires.txt
+writing top-level names to adaptive_solver_bench.egg-info/top_level.txt
+reading manifest file 'adaptive_solver_bench.egg-info/SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+no previously-included directories found matching 'experiments/results'
+warning: no previously-included files matching '__pycache__' found anywhere in distribution
+warning: no previously-included files matching '*.py[cod]' found anywhere in distribution
+warning: no previously-included files matching '.DS_Store' found anywhere in distribution
+adding license file 'LICENSE'
+writing manifest file 'adaptive_solver_bench.egg-info/SOURCES.txt'
+* Installed build dependency versions:
+  - setuptools==84.0.0
+* Building wheel...
+running bdist_wheel
+running build
+running build_py
+creating build/lib/adaptive_ode
+copying adaptive_ode/systems.py -> build/lib/adaptive_ode
+copying adaptive_ode/ml_methods.py -> build/lib/adaptive_ode
+copying adaptive_ode/methods.py -> build/lib/adaptive_ode
+copying adaptive_ode/oscillator.py -> build/lib/adaptive_ode
+copying adaptive_ode/__init__.py -> build/lib/adaptive_ode
+copying adaptive_ode/core.py -> build/lib/adaptive_ode
+copying adaptive_ode/api.py -> build/lib/adaptive_ode
+copying adaptive_ode/cli.py -> build/lib/adaptive_ode
+copying adaptive_ode/demo.py -> build/lib/adaptive_ode
+copying adaptive_ode/custom_system.py -> build/lib/adaptive_ode
+copying adaptive_ode/__main__.py -> build/lib/adaptive_ode
+copying adaptive_ode/numerics.py -> build/lib/adaptive_ode
+creating build/lib/adaptive_ode/pipeline
+copying adaptive_ode/pipeline/__init__.py -> build/lib/adaptive_ode/pipeline
+copying adaptive_ode/pipeline/run_pipeline.py -> build/lib/adaptive_ode/pipeline
+creating build/lib/adaptive_ode/experiments
+copying adaptive_ode/experiments/mismatch.py -> build/lib/adaptive_ode/experiments
+copying adaptive_ode/experiments/oscillator.py -> build/lib/adaptive_ode/experiments
+copying adaptive_ode/experiments/__init__.py -> build/lib/adaptive_ode/experiments
+copying adaptive_ode/experiments/classical_controls.py -> build/lib/adaptive_ode/experiments
+copying adaptive_ode/experiments/robustness.py -> build/lib/adaptive_ode/experiments
+copying adaptive_ode/experiments/artifacts.py -> build/lib/adaptive_ode/experiments
+copying adaptive_ode/experiments/capture_baseline.py -> build/lib/adaptive_ode/experiments
+copying adaptive_ode/experiments/reporting.py -> build/lib/adaptive_ode/experiments
+creating build/lib/adaptive_ode/solvers
+copying adaptive_ode/solvers/neural_ode.py -> build/lib/adaptive_ode/solvers
+copying adaptive_ode/solvers/__init__.py -> build/lib/adaptive_ode/solvers
+copying adaptive_ode/solvers/classical.py -> build/lib/adaptive_ode/solvers
+copying adaptive_ode/solvers/candidates.py -> build/lib/adaptive_ode/solvers
+creating build/lib/adaptive_ode/utils
+copying adaptive_ode/utils/data_loader.py -> build/lib/adaptive_ode/utils
+copying adaptive_ode/utils/__init__.py -> build/lib/adaptive_ode/utils
+creating build/lib/adaptive_ode/diagnostics
+copying adaptive_ode/diagnostics/statistical_tests.py -> build/lib/adaptive_ode/diagnostics
+copying adaptive_ode/diagnostics/__init__.py -> build/lib/adaptive_ode/diagnostics
+copying adaptive_ode/diagnostics/engine.py -> build/lib/adaptive_ode/diagnostics
+creating build/lib/adaptive_ode/evaluation
+copying adaptive_ode/evaluation/metrics.py -> build/lib/adaptive_ode/evaluation
+copying adaptive_ode/evaluation/plotting.py -> build/lib/adaptive_ode/evaluation
+copying adaptive_ode/evaluation/__init__.py -> build/lib/adaptive_ode/evaluation
+creating build/lib/adaptive_ode/decision
+copying adaptive_ode/decision/__init__.py -> build/lib/adaptive_ode/decision
+copying adaptive_ode/decision/rules.py -> build/lib/adaptive_ode/decision
+running egg_info
+writing adaptive_solver_bench.egg-info/PKG-INFO
+writing dependency_links to adaptive_solver_bench.egg-info/dependency_links.txt
+writing entry points to adaptive_solver_bench.egg-info/entry_points.txt
+writing requirements to adaptive_solver_bench.egg-info/requires.txt
+writing top-level names to adaptive_solver_bench.egg-info/top_level.txt
+reading manifest file 'adaptive_solver_bench.egg-info/SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+no previously-included directories found matching 'experiments/results'
+warning: no previously-included files matching '__pycache__' found anywhere in distribution
+warning: no previously-included files matching '*.py[cod]' found anywhere in distribution
+warning: no previously-included files matching '.DS_Store' found anywhere in distribution
+adding license file 'LICENSE'
+writing manifest file 'adaptive_solver_bench.egg-info/SOURCES.txt'
+installing to build/bdist.macosx-15.0-arm64/wheel
+running install
+running install_lib
+creating build/bdist.macosx-15.0-arm64/wheel
+creating build/bdist.macosx-15.0-arm64/wheel/adaptive_ode
+creating build/bdist.macosx-15.0-arm64/wheel/adaptive_ode/pipeline
+copying build/lib/adaptive_ode/pipeline/__init__.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/pipeline
+copying build/lib/adaptive_ode/pipeline/run_pipeline.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/pipeline
+copying build/lib/adaptive_ode/systems.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode
+copying build/lib/adaptive_ode/ml_methods.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode
+copying build/lib/adaptive_ode/methods.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode
+creating build/bdist.macosx-15.0-arm64/wheel/adaptive_ode/experiments
+copying build/lib/adaptive_ode/experiments/mismatch.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/experiments
+copying build/lib/adaptive_ode/experiments/oscillator.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/experiments
+copying build/lib/adaptive_ode/experiments/__init__.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/experiments
+copying build/lib/adaptive_ode/experiments/classical_controls.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/experiments
+copying build/lib/adaptive_ode/experiments/robustness.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/experiments
+copying build/lib/adaptive_ode/experiments/artifacts.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/experiments
+copying build/lib/adaptive_ode/experiments/capture_baseline.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/experiments
+copying build/lib/adaptive_ode/experiments/reporting.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/experiments
+copying build/lib/adaptive_ode/oscillator.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode
+copying build/lib/adaptive_ode/__init__.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode
+creating build/bdist.macosx-15.0-arm64/wheel/adaptive_ode/solvers
+copying build/lib/adaptive_ode/solvers/neural_ode.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/solvers
+copying build/lib/adaptive_ode/solvers/__init__.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/solvers
+copying build/lib/adaptive_ode/solvers/classical.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/solvers
+copying build/lib/adaptive_ode/solvers/candidates.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/solvers
+copying build/lib/adaptive_ode/core.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode
+creating build/bdist.macosx-15.0-arm64/wheel/adaptive_ode/utils
+copying build/lib/adaptive_ode/utils/data_loader.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/utils
+copying build/lib/adaptive_ode/utils/__init__.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/utils
+copying build/lib/adaptive_ode/api.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode
+copying build/lib/adaptive_ode/cli.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode
+creating build/bdist.macosx-15.0-arm64/wheel/adaptive_ode/diagnostics
+copying build/lib/adaptive_ode/diagnostics/statistical_tests.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/diagnostics
+copying build/lib/adaptive_ode/diagnostics/__init__.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/diagnostics
+copying build/lib/adaptive_ode/diagnostics/engine.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/diagnostics
+creating build/bdist.macosx-15.0-arm64/wheel/adaptive_ode/evaluation
+copying build/lib/adaptive_ode/evaluation/metrics.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/evaluation
+copying build/lib/adaptive_ode/evaluation/plotting.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/evaluation
+copying build/lib/adaptive_ode/evaluation/__init__.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/evaluation
+creating build/bdist.macosx-15.0-arm64/wheel/adaptive_ode/decision
+copying build/lib/adaptive_ode/decision/__init__.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/decision
+copying build/lib/adaptive_ode/decision/rules.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode/decision
+copying build/lib/adaptive_ode/demo.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode
+copying build/lib/adaptive_ode/custom_system.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode
+copying build/lib/adaptive_ode/__main__.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode
+copying build/lib/adaptive_ode/numerics.py -> build/bdist.macosx-15.0-arm64/wheel/./adaptive_ode
+running install_egg_info
+Copying adaptive_solver_bench.egg-info to build/bdist.macosx-15.0-arm64/wheel/./adaptive_solver_bench-0.1.0-py3.13.egg-info
+running install_scripts
+creating build/bdist.macosx-15.0-arm64/wheel/adaptive_solver_bench-0.1.0.dist-info/WHEEL
+creating '/Users/vaishnaviraghupathi/Desktop/Hybrid-solver/Adaptive-ODE-Solver-with-Diagnostic-Driven-Model-Switching/dist/.tmp-lmw30742/adaptive_solver_bench-0.1.0-py3-none-any.whl' and adding 'build/bdist.macosx-15.0-arm64/wheel' to it
+adding 'adaptive_ode/__init__.py'
+adding 'adaptive_ode/__main__.py'
+adding 'adaptive_ode/api.py'
+adding 'adaptive_ode/cli.py'
+adding 'adaptive_ode/core.py'
+adding 'adaptive_ode/custom_system.py'
+adding 'adaptive_ode/demo.py'
+adding 'adaptive_ode/methods.py'
+adding 'adaptive_ode/ml_methods.py'
+adding 'adaptive_ode/numerics.py'
+adding 'adaptive_ode/oscillator.py'
+adding 'adaptive_ode/systems.py'
+adding 'adaptive_ode/decision/__init__.py'
+adding 'adaptive_ode/decision/rules.py'
+adding 'adaptive_ode/diagnostics/__init__.py'
+adding 'adaptive_ode/diagnostics/engine.py'
+adding 'adaptive_ode/diagnostics/statistical_tests.py'
+adding 'adaptive_ode/evaluation/__init__.py'
+adding 'adaptive_ode/evaluation/metrics.py'
+adding 'adaptive_ode/evaluation/plotting.py'
+adding 'adaptive_ode/experiments/__init__.py'
+adding 'adaptive_ode/experiments/artifacts.py'
+adding 'adaptive_ode/experiments/capture_baseline.py'
+adding 'adaptive_ode/experiments/classical_controls.py'
+adding 'adaptive_ode/experiments/mismatch.py'
+adding 'adaptive_ode/experiments/oscillator.py'
+adding 'adaptive_ode/experiments/reporting.py'
+adding 'adaptive_ode/experiments/robustness.py'
+adding 'adaptive_ode/pipeline/__init__.py'
+adding 'adaptive_ode/pipeline/run_pipeline.py'
+adding 'adaptive_ode/solvers/__init__.py'
+adding 'adaptive_ode/solvers/candidates.py'
+adding 'adaptive_ode/solvers/classical.py'
+adding 'adaptive_ode/solvers/neural_ode.py'
+adding 'adaptive_ode/utils/__init__.py'
+adding 'adaptive_ode/utils/data_loader.py'
+adding 'adaptive_solver_bench-0.1.0.dist-info/licenses/LICENSE'
+adding 'adaptive_solver_bench-0.1.0.dist-info/METADATA'
+adding 'adaptive_solver_bench-0.1.0.dist-info/WHEEL'
+adding 'adaptive_solver_bench-0.1.0.dist-info/entry_points.txt'
+adding 'adaptive_solver_bench-0.1.0.dist-info/top_level.txt'
+adding 'adaptive_solver_bench-0.1.0.dist-info/RECORD'
+removing build/bdist.macosx-15.0-arm64/wheel
+Successfully built adaptive_solver_bench-0.1.0.tar.gz and adaptive_solver_bench-0.1.0-py3-none-any.whl

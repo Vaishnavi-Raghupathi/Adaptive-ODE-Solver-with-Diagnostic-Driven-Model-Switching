@@ -1,0 +1,556 @@
+{
+  "mismatch_level": 0.0,
+  "seed": 37,
+  "assumed_parameters": {
+    "damping": 0.1,
+    "stiffness": 4.0
+  },
+  "selected_method": "assumed_dop853_tight",
+  "split_counts": {
+    "train": 240,
+    "validation": 80,
+    "test": 81
+  },
+  "split_time_ranges": {
+    "train": [
+      0.0,
+      11.950000000000001
+    ],
+    "validation": [
+      12.0,
+      15.950000000000001
+    ],
+    "test": [
+      16.0,
+      20.0
+    ]
+  },
+  "methods": [
+    {
+      "method": "assumed_rk4",
+      "variant": "fixed_grid",
+      "status": "ok",
+      "message": "",
+      "fit_seconds": 5.00003807246685e-06,
+      "prediction_seconds": 0.00508125004125759,
+      "validation_mse": 7.121881306154169e-10,
+      "details": {
+        "damping": 0.1,
+        "stiffness": 4.0
+      },
+      "prediction_key": "prediction_00",
+      "search_fit_seconds": 5.00003807246685e-06,
+      "search_prediction_seconds": 0.00508125004125759,
+      "test_metrics": {
+        "mse": 6.917016379505713e-10,
+        "rmse": 2.630022125288248e-05,
+        "mae": 2.2766678981252094e-05
+      },
+      "observed_test_metrics": {
+        "mse": 6.917016379505713e-10,
+        "rmse": 2.630022125288248e-05,
+        "mae": 2.2766678981252094e-05
+      },
+      "test_residuals": {
+        "mean_by_state": [
+          -4.682345944172755e-06,
+          -9.792553237473303e-07
+        ],
+        "std_by_state": [
+          1.7613646361820846e-05,
+          3.240801495327751e-05
+        ],
+        "max_abs_by_state": [
+          2.456328433193735e-05,
+          4.9055699164714944e-05
+        ],
+        "lag1_correlation_by_state": [
+          0.9958184519949037,
+          0.994033553289111
+        ]
+      },
+      "selected_on_validation": false,
+      "eligible_for_selection": true
+    },
+    {
+      "method": "assumed_dop853",
+      "variant": "fixed",
+      "status": "ok",
+      "message": "",
+      "fit_seconds": 3.834022209048271e-06,
+      "prediction_seconds": 0.004349750000983477,
+      "validation_mse": 6.554088029115694e-12,
+      "details": {
+        "damping": 0.1,
+        "stiffness": 4.0,
+        "rtol": 1e-06,
+        "atol": 1e-08
+      },
+      "prediction_key": "prediction_01",
+      "search_fit_seconds": 3.834022209048271e-06,
+      "search_prediction_seconds": 0.004349750000983477,
+      "test_metrics": {
+        "mse": 6.40753859597742e-12,
+        "rmse": 2.5313116354920467e-06,
+        "mae": 2.184065128370973e-06
+      },
+      "observed_test_metrics": {
+        "mse": 6.40753859597742e-12,
+        "rmse": 2.5313116354920467e-06,
+        "mae": 2.184065128370973e-06
+      },
+      "test_residuals": {
+        "mean_by_state": [
+          -4.2696906012358877e-07,
+          -2.8188467990991446e-07
+        ],
+        "std_by_state": [
+          1.6800190234218583e-06,
+          3.1194313138494933e-06
+        ],
+        "max_abs_by_state": [
+          2.382221070074131e-06,
+          4.988042003467585e-06
+        ],
+        "lag1_correlation_by_state": [
+          0.9745122907277548,
+          0.9713149957200172
+        ]
+      },
+      "selected_on_validation": false,
+      "eligible_for_selection": true
+    },
+    {
+      "method": "assumed_dop853_tight",
+      "variant": "fixed",
+      "status": "ok",
+      "message": "",
+      "fit_seconds": 3.833032678812742e-06,
+      "prediction_seconds": 0.012349082971923053,
+      "validation_mse": 6.667986850429349e-20,
+      "details": {
+        "damping": 0.1,
+        "stiffness": 4.0,
+        "rtol": 1e-10,
+        "atol": 1e-12
+      },
+      "prediction_key": "prediction_02",
+      "search_fit_seconds": 3.833032678812742e-06,
+      "search_prediction_seconds": 0.012349082971923053,
+      "test_metrics": {
+        "mse": 6.462003553545916e-20,
+        "rmse": 2.542047118671469e-10,
+        "mae": 2.1737313117086682e-10
+      },
+      "observed_test_metrics": {
+        "mse": 6.462003553545916e-20,
+        "rmse": 2.542047118671469e-10,
+        "mae": 2.1737313117086682e-10
+      },
+      "test_residuals": {
+        "mean_by_state": [
+          -4.239764771045035e-11,
+          -6.959410628371981e-12
+        ],
+        "std_by_state": [
+          1.6783739804103865e-10,
+          3.1499949993937846e-10
+        ],
+        "max_abs_by_state": [
+          2.626917017245489e-10,
+          4.892414251500554e-10
+        ],
+        "lag1_correlation_by_state": [
+          0.9155458703084228,
+          0.8825463081291662
+        ]
+      },
+      "selected_on_validation": true,
+      "eligible_for_selection": true
+    },
+    {
+      "method": "fitted_dop853",
+      "variant": "single_start",
+      "status": "ok",
+      "message": "",
+      "fit_seconds": 0.034918708028271794,
+      "prediction_seconds": 0.009292208007536829,
+      "validation_mse": 6.860780512325557e-19,
+      "details": {
+        "optimizer": "scipy.optimize.least_squares",
+        "nfev": 2,
+        "cost": 3.76323605592736e-16,
+        "optimality": 1.0409212079397043e-11,
+        "message": "`gtol` termination condition is satisfied.",
+        "bounds": [
+          [
+            0.0,
+            0.5
+          ],
+          [
+            2.0,
+            8.0
+          ]
+        ],
+        "active_mask": [
+          0,
+          0
+        ],
+        "parameters": {
+          "damping": 0.10000000001627819,
+          "stiffness": 4.000000000605651
+        }
+      },
+      "prediction_key": "prediction_03",
+      "search_fit_seconds": 0.034918708028271794,
+      "search_prediction_seconds": 0.009292208007536829,
+      "test_metrics": {
+        "mse": 4.690519707953354e-19,
+        "rmse": 6.848736896649888e-10,
+        "mae": 4.815126672675271e-10
+      },
+      "observed_test_metrics": {
+        "mse": 4.690519707953354e-19,
+        "rmse": 6.848736896649888e-10,
+        "mae": 4.815126672675271e-10
+      },
+      "test_residuals": {
+        "mean_by_state": [
+          -2.544477946029533e-11,
+          1.2203924213786502e-11
+        ],
+        "std_by_state": [
+          4.1457416457266194e-10,
+          8.748918968030003e-10
+        ],
+        "max_abs_by_state": [
+          1.1420403511763766e-09,
+          2.2040413938384518e-09
+        ],
+        "lag1_correlation_by_state": [
+          -0.20007317499349922,
+          -0.2042736594802626
+        ]
+      },
+      "selected_on_validation": false,
+      "eligible_for_selection": true
+    },
+    {
+      "method": "rk4_residual_nn",
+      "variant": "alpha=0.01",
+      "status": "ok",
+      "message": "",
+      "fit_seconds": 0.02668170799734071,
+      "prediction_seconds": 0.00617166596930474,
+      "validation_mse": 0.0021504329787115787,
+      "details": {
+        "alpha": 0.01,
+        "n_iter": 33,
+        "loss": 0.0033094292415878626,
+        "warnings": [],
+        "loss_curve": [
+          0.08192863170829279,
+          0.030418376589686956,
+          0.00942129110607382,
+          0.00880705153095698,
+          0.013584001864859144,
+          0.014493400815124896,
+          0.01166809678433131,
+          0.008447033577757914,
+          0.006901407857341159,
+          0.006579118364594712,
+          0.006473679095121058,
+          0.00600255151122179,
+          0.005280268348170774,
+          0.004620915810914636,
+          0.004278049814292208,
+          0.0042484570361657,
+          0.004363307391854225,
+          0.004429950573243128,
+          0.004259666697599627,
+          0.003919816319387304,
+          0.0036122538228611075,
+          0.003488501333057204,
+          0.0035584238526599654,
+          0.003663539852998837,
+          0.0036572775516891614,
+          0.003538880565969881,
+          0.0034199139468720136,
+          0.0033592282875458865,
+          0.0033581652899580513,
+          0.003365698125494231,
+          0.003343096574958093,
+          0.0033163532118632376,
+          0.0033094292415878626
+        ]
+      },
+      "prediction_key": "prediction_05",
+      "search_fit_seconds": 0.05413187498925254,
+      "search_prediction_seconds": 0.011860832979436964,
+      "test_metrics": {
+        "mse": 0.005382469121202315,
+        "rmse": 0.07336531279291539,
+        "mae": 0.06472462370478589
+      },
+      "observed_test_metrics": {
+        "mse": 0.005382469121202315,
+        "rmse": 0.07336531279291539,
+        "mae": 0.06472462370478589
+      },
+      "test_residuals": {
+        "mean_by_state": [
+          0.06595556061581084,
+          0.06319773676408594
+        ],
+        "std_by_state": [
+          0.042359131824520536,
+          0.025031026451764363
+        ],
+        "max_abs_by_state": [
+          0.13183860604410713,
+          0.09738593712599108
+        ],
+        "lag1_correlation_by_state": [
+          0.9936241017939405,
+          0.9944967529599773
+        ]
+      },
+      "selected_on_validation": false,
+      "eligible_for_selection": true
+    },
+    {
+      "method": "oracle_dop853",
+      "variant": "true_equations",
+      "status": "ok",
+      "message": "",
+      "fit_seconds": 1.0417017620056868e-05,
+      "prediction_seconds": 0.013129124999977648,
+      "validation_mse": null,
+      "details": {
+        "damping": 0.1,
+        "stiffness": 4.0,
+        "rtol": 1e-10,
+        "atol": 1e-12
+      },
+      "prediction_key": "prediction_oracle",
+      "search_fit_seconds": 1.0417017620056868e-05,
+      "search_prediction_seconds": 0.013129124999977648,
+      "test_metrics": {
+        "mse": 6.462003553545916e-20,
+        "rmse": 2.542047118671469e-10,
+        "mae": 2.1737313117086682e-10
+      },
+      "observed_test_metrics": {
+        "mse": 6.462003553545916e-20,
+        "rmse": 2.542047118671469e-10,
+        "mae": 2.1737313117086682e-10
+      },
+      "test_residuals": {
+        "mean_by_state": [
+          -4.239764771045035e-11,
+          -6.959410628371981e-12
+        ],
+        "std_by_state": [
+          1.6783739804103865e-10,
+          3.1499949993937846e-10
+        ],
+        "max_abs_by_state": [
+          2.626917017245489e-10,
+          4.892414251500554e-10
+        ],
+        "lag1_correlation_by_state": [
+          0.9155458703084228,
+          0.8825463081291662
+        ]
+      },
+      "selected_on_validation": false,
+      "eligible_for_selection": false
+    }
+  ],
+  "tuning_attempts": [
+    {
+      "method": "assumed_rk4",
+      "variant": "fixed_grid",
+      "status": "ok",
+      "message": "",
+      "fit_seconds": 5.00003807246685e-06,
+      "prediction_seconds": 0.00508125004125759,
+      "validation_mse": 7.121881306154169e-10,
+      "details": {
+        "damping": 0.1,
+        "stiffness": 4.0
+      },
+      "prediction_key": "prediction_00"
+    },
+    {
+      "method": "assumed_dop853",
+      "variant": "fixed",
+      "status": "ok",
+      "message": "",
+      "fit_seconds": 3.834022209048271e-06,
+      "prediction_seconds": 0.004349750000983477,
+      "validation_mse": 6.554088029115694e-12,
+      "details": {
+        "damping": 0.1,
+        "stiffness": 4.0,
+        "rtol": 1e-06,
+        "atol": 1e-08
+      },
+      "prediction_key": "prediction_01"
+    },
+    {
+      "method": "assumed_dop853_tight",
+      "variant": "fixed",
+      "status": "ok",
+      "message": "",
+      "fit_seconds": 3.833032678812742e-06,
+      "prediction_seconds": 0.012349082971923053,
+      "validation_mse": 6.667986850429349e-20,
+      "details": {
+        "damping": 0.1,
+        "stiffness": 4.0,
+        "rtol": 1e-10,
+        "atol": 1e-12
+      },
+      "prediction_key": "prediction_02"
+    },
+    {
+      "method": "fitted_dop853",
+      "variant": "single_start",
+      "status": "ok",
+      "message": "",
+      "fit_seconds": 0.034918708028271794,
+      "prediction_seconds": 0.009292208007536829,
+      "validation_mse": 6.860780512325557e-19,
+      "details": {
+        "optimizer": "scipy.optimize.least_squares",
+        "nfev": 2,
+        "cost": 3.76323605592736e-16,
+        "optimality": 1.0409212079397043e-11,
+        "message": "`gtol` termination condition is satisfied.",
+        "bounds": [
+          [
+            0.0,
+            0.5
+          ],
+          [
+            2.0,
+            8.0
+          ]
+        ],
+        "active_mask": [
+          0,
+          0
+        ],
+        "parameters": {
+          "damping": 0.10000000001627819,
+          "stiffness": 4.000000000605651
+        }
+      },
+      "prediction_key": "prediction_03"
+    },
+    {
+      "method": "rk4_residual_nn",
+      "variant": "alpha=0.0001",
+      "status": "ok",
+      "message": "",
+      "fit_seconds": 0.02745016699191183,
+      "prediction_seconds": 0.005689167010132223,
+      "validation_mse": 0.0021687625437243653,
+      "details": {
+        "alpha": 0.0001,
+        "n_iter": 33,
+        "loss": 0.00032120210226522854,
+        "warnings": [],
+        "loss_curve": [
+          0.07889584192711536,
+          0.02738895586856841,
+          0.006393587784429408,
+          0.005779112459366301,
+          0.010555125572604521,
+          0.01146504539564571,
+          0.008642197811219256,
+          0.005424598487479634,
+          0.003881817805415978,
+          0.0035608045112247525,
+          0.0034561218601544983,
+          0.002986179676700716,
+          0.0022655432960039233,
+          0.0016075599144100262,
+          0.001265882375957526,
+          0.0012376713236246892,
+          0.0013543002398362846,
+          0.0014226616222580307,
+          0.0012533632022493205,
+          0.0009140085876932418,
+          0.0006073554710186298,
+          0.0004853796342762604,
+          0.0005574891818804819,
+          0.0006642134884841234,
+          0.0006587068688049879,
+          0.0005408378251418203,
+          0.0004229640511091541,
+          0.00036391457444709846,
+          0.00036448914772893435,
+          0.00037341314099567137,
+          0.00035208053420147066,
+          0.0003267449772259918,
+          0.00032120210226522854
+        ]
+      },
+      "prediction_key": "prediction_04"
+    },
+    {
+      "method": "rk4_residual_nn",
+      "variant": "alpha=0.01",
+      "status": "ok",
+      "message": "",
+      "fit_seconds": 0.02668170799734071,
+      "prediction_seconds": 0.00617166596930474,
+      "validation_mse": 0.0021504329787115787,
+      "details": {
+        "alpha": 0.01,
+        "n_iter": 33,
+        "loss": 0.0033094292415878626,
+        "warnings": [],
+        "loss_curve": [
+          0.08192863170829279,
+          0.030418376589686956,
+          0.00942129110607382,
+          0.00880705153095698,
+          0.013584001864859144,
+          0.014493400815124896,
+          0.01166809678433131,
+          0.008447033577757914,
+          0.006901407857341159,
+          0.006579118364594712,
+          0.006473679095121058,
+          0.00600255151122179,
+          0.005280268348170774,
+          0.004620915810914636,
+          0.004278049814292208,
+          0.0042484570361657,
+          0.004363307391854225,
+          0.004429950573243128,
+          0.004259666697599627,
+          0.003919816319387304,
+          0.0036122538228611075,
+          0.003488501333057204,
+          0.0035584238526599654,
+          0.003663539852998837,
+          0.0036572775516891614,
+          0.003538880565969881,
+          0.0034199139468720136,
+          0.0033592282875458865,
+          0.0033581652899580513,
+          0.003365698125494231,
+          0.003343096574958093,
+          0.0033163532118632376,
+          0.0033094292415878626
+        ]
+      },
+      "prediction_key": "prediction_05"
+    }
+  ],
+  "case_id": "level_00_seed_37"
+}

@@ -1,0 +1,66 @@
+{
+  "study_id": "robustness_and_initial_conditions_v2",
+  "protocol_version": 2,
+  "systems": [
+    "linear_mismatch",
+    "missing_cubic_force"
+  ],
+  "t_span": [
+    0.0,
+    20.0
+  ],
+  "num_points": 401,
+  "train_fraction": 0.6,
+  "validation_fraction": 0.2,
+  "training_initial_state": [
+    2.0,
+    0.0
+  ],
+  "held_out_initial_states": [
+    [
+      1.0,
+      0.0
+    ],
+    [
+      3.0,
+      0.0
+    ],
+    [
+      2.0,
+      1.0
+    ]
+  ],
+  "true_damping": 0.1,
+  "true_stiffness": 4.0,
+  "missing_cubic_coefficient": 0.5,
+  "assumed_damping": 0.5,
+  "assumed_stiffness": 3.0,
+  "noise_stds": [
+    0.0,
+    0.02,
+    0.1
+  ],
+  "train_strides": [
+    1,
+    4
+  ],
+  "seeds": [
+    101,
+    202,
+    303,
+    404,
+    505
+  ],
+  "nn_alphas": [
+    0.0001,
+    0.01
+  ],
+  "nn_max_iter": 1200,
+  "smoothing_windows": [
+    9,
+    21
+  ],
+  "acceleration_nn_window": 9,
+  "polynomial_alpha": 1e-06,
+  "max_nfev": 50000
+}

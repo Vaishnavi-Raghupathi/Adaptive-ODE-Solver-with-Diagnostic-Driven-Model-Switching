@@ -1,6 +1,14 @@
 # Python cache files
 __pycache__/
 *.py[cod]
+.venv/
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+build/
+*.egg-info/
+.venv-*/
 
 # Node / Vite artifacts
 node_modules/
