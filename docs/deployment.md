@@ -1,5 +1,11 @@
 # Public Streamlit demo
 
+Live app: [Adaptive Solver Bench](https://adaptive-ode-solver-with-diagnostic-driven-model-switching-bgd.streamlit.app/).
+Verified on 2026-10-28 by running the example comparison and downloading its
+recommendation report through the public app. The existing Community Cloud app
+tracks this repository's `main` branch. If it sleeps after inactivity, use the
+page's wake-up button and allow the app to restart.
+
 The repository entry point is `app.py`. It imports the packaged platform, so
 deploy the repository with its current source rather than copying that file alone.
 `requirements.txt` installs the project with its `demo` dependencies. No API keys

@@ -93,7 +93,7 @@ The demo uses the same public API, with distinct validation and final-test metri
 
 The platform opens in CSV mode, includes runnable single- and independent-experiment examples, and supports optional equations for measured data. It exports a Markdown recommendation, metrics, trajectories and evaluation metadata. Reports include baseline comparisons, all solver-setting trials, failure diagnostics and accuracy/runtime trade-offs. Changing benchmark inputs hides previous recommendations until a new run is completed.
 
-See the [deployment guide](docs/deployment.md) for hosting this Python app on Streamlit Community Cloud. The example oscillator is available immediately on first load; comparisons run when requested.
+Open the [public Streamlit demo](https://adaptive-ode-solver-with-diagnostic-driven-model-switching-bgd.streamlit.app/), or see the [deployment guide](docs/deployment.md) for hosting instructions. The example oscillator is available immediately on first load; comparisons run when requested. If the hosted app is asleep, use its wake-up button.
 
 ## What is implemented
 
