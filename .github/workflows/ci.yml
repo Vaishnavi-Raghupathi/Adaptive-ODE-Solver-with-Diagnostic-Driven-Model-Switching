@@ -55,6 +55,7 @@ jobs:
           "$RUNNER_TEMP/wheel-env/bin/python" "$GITHUB_WORKSPACE/examples/01_known_equations.py" --output "$RUNNER_TEMP/tutorial-equations"
           "$RUNNER_TEMP/wheel-env/bin/python" "$GITHUB_WORKSPACE/examples/02_missing_physics.py" --output "$RUNNER_TEMP/tutorial-mismatch"
           "$RUNNER_TEMP/wheel-env/bin/python" "$GITHUB_WORKSPACE/examples/03_time_series.py" --output "$RUNNER_TEMP/tutorial-data"
+          "$RUNNER_TEMP/wheel-env/bin/python" "$GITHUB_WORKSPACE/examples/04_independent_trajectories.py" --timing-repeats 1 --output "$RUNNER_TEMP/tutorial-trajectories"
       - uses: actions/upload-artifact@v4
         with:
           name: distributions

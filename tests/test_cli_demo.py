@@ -44,7 +44,37 @@ def test_streamlit_demo_runs_a_real_benchmark():
     app_path = Path(__file__).resolve().parents[1] / "app.py"
     app = streamlit_testing.AppTest.from_file(str(app_path), default_timeout=30).run()
     assert not app.exception
+    app.sidebar.radio[0].set_value("Built-in system").run()
     app.sidebar.button[0].click().run()
     assert not app.exception
     assert any(metric.value == "calibrated_oscillator" for metric in app.metric)
     assert not app.error
+
+
+def test_dataset_demo_equations_and_stale_results():
+    streamlit_testing = pytest.importorskip("streamlit.testing.v1")
+    app_path = Path(__file__).resolve().parents[1] / "app.py"
+    app = streamlit_testing.AppTest.from_file(str(app_path), default_timeout=30).run()
+    next(item for item in app.sidebar.checkbox if item.label == "Use example oscillator dataset").check().run()
+    next(item for item in app.sidebar.checkbox if item.label == "I have governing equations").check().run()
+    app.sidebar.button[0].click().run()
+    assert not app.exception and not app.error
+    assert len(app.session_state["benchmark_result"].rows) == 11
+    assert len(app.metric) == 3
+    next(item for item in app.sidebar.selectbox if item.label == "Selection metric").set_value("mse").run()
+    assert not app.exception
+    assert len(app.metric) == 0  # old recommendations cannot masquerade as a new run
+
+
+def test_independent_trajectory_demo_selects_and_exports_a_result():
+    streamlit_testing = pytest.importorskip("streamlit.testing.v1")
+    app_path = Path(__file__).resolve().parents[1] / "app.py"
+    app = streamlit_testing.AppTest.from_file(str(app_path), default_timeout=60).run()
+    app.sidebar.radio[0].set_value("Independent trajectories").run()
+    app.sidebar.button[0].click().run()
+    assert not app.exception and not app.error
+    result = app.session_state["trajectory_result"]
+    assert result.selected_method is not None
+    assert len(result.rows) == 9 and len(result.trials) == 21
+    assert result.assessment["trajectory_counts"] == {"train": 3, "validation": 3, "test": 3}
+    assert "No fallback" not in result.report()

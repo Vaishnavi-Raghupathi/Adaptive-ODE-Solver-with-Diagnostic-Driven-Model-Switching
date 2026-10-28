@@ -1,0 +1,6 @@
+{
+  "name": "Damped oscillator",
+  "variables": ["position", "velocity"],
+  "parameters": {"c": 0.1, "k": 4},
+  "derivatives": ["velocity", "-c*velocity-k*position"]
+}

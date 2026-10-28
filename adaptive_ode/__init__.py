@@ -3,10 +3,14 @@
 __version__ = "0.1.0"
 
 # Lazy exports keep legacy research imports and optional dependencies isolated.
-__all__ = ["benchmark", "benchmark_data", "BenchmarkConfig", "BenchmarkResult", "Candidate", "FittedModel", "evaluate", "DynamicalSystem", "OscillatorParameters"]
+__all__ = ["benchmark", "benchmark_data", "benchmark_trajectories", "Trajectory", "TrajectoryBenchmarkResult",
+           "BenchmarkConfig", "BenchmarkResult", "Candidate", "FittedModel", "evaluate", "DynamicalSystem", "OscillatorParameters"]
 
 
 def __getattr__(name):
+    if name in {"benchmark_trajectories", "Trajectory", "TrajectoryBenchmarkResult"}:
+        from adaptive_ode import trajectories
+        return getattr(trajectories, name)
     if name in {"benchmark", "benchmark_data"}:
         from adaptive_ode import api
         return getattr(api, name)

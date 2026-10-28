@@ -6,6 +6,8 @@ from adaptive_ode.core import BenchmarkConfig, evaluate
 from adaptive_ode.oscillator import OscillatorParameters, analytical_trajectory
 from adaptive_ode.methods import (
     classical_candidate, learned_polynomial_candidate, oscillator_calibration_candidate, spline_candidate,
+    persistence_candidate, linear_trend_candidate,
+    classical_suite,
 )
 from adaptive_ode.numerics import integrate, time_grid, trajectory
 from adaptive_ode.systems import DynamicalSystem, get_system
@@ -33,9 +35,8 @@ def benchmark(system="mismatch", *, config=None, candidates=None):
                               rtol=1e-11, atol=1e-13, max_nfev=1000000)
         reference_kind = f"numerical reference ({system.reference_method})"
     if candidates is None:
-        candidates = [classical_candidate(system.candidate_rhs, method=method, y0=system.y0,
-                                          max_nfev=config.max_nfev)
-                      for method in ["RK4", "RK45", "DOP853", "BDF", "Radau", "LSODA"]]
+        candidates = classical_suite(system.candidate_rhs, y0=system.y0, max_nfev=config.max_nfev,
+                                     sweep=config.solver_sweep, base_step=float(np.median(np.diff(t[:int(len(t)*config.train_fraction)]))))
         if system is get_system("mismatch"):
             candidates.append(oscillator_calibration_candidate(max_nfev=config.max_nfev))
         if config.include_ml:
@@ -45,23 +46,40 @@ def benchmark(system="mismatch", *, config=None, candidates=None):
                            for alpha in [1e-4, 1e-2]]
     result = evaluate(t, reference, candidates, config=config, reference=reference, name=system.name)
     result.reference_kind = reference_kind
+    result.context = {"input_kind": "known_equations", "system_key": system.key,
+                      "state_labels": list(system.labels),
+                      "equation_source": "Retain the DynamicalSystem/RHS source to reproduce custom equations."}
     return result
 
 
-def benchmark_data(t, observed, *, config=None, candidates=None):
+def benchmark_data(t, observed, *, config=None, candidates=None, rhs=None):
     """Chronological evaluation on uploaded observations; equations not required.
 
     Test observations are the target, not guaranteed noise-free ground truth.
-    Default methods extrapolate beyond their training segment.
+    Default methods extrapolate beyond their training segment. Supply rhs(t, y)
+    to additionally compare numerical integrators against the same observations.
+    Equations must use the supplied time/state units and state-column order.
     """
     config = config or BenchmarkConfig()
     if not isinstance(config, BenchmarkConfig):
         raise TypeError("config must be a BenchmarkConfig.")
     t = time_grid(t)
     observed = trajectory(observed, len(t))
+    if rhs is not None and not callable(rhs):
+        raise TypeError("rhs must be a callable rhs(t, state).")
+    if rhs is not None and candidates is not None:
+        raise ValueError("Use rhs for default numerical candidates, or supply explicit candidates, not both.")
     if candidates is None:
-        candidates = [spline_candidate(), learned_polynomial_candidate(max_nfev=config.max_nfev)]
+        candidates = [persistence_candidate(), linear_trend_candidate(), spline_candidate(),
+                      learned_polynomial_candidate(degree=1, max_nfev=config.max_nfev),
+                      learned_polynomial_candidate(max_nfev=config.max_nfev)]
+        if rhs is not None:
+            candidates = classical_suite(rhs, max_nfev=config.max_nfev, sweep=config.solver_sweep,
+                                         base_step=float(np.median(np.diff(t[:int(len(t)*config.train_fraction)])))) + candidates
         if config.include_ml:
             from adaptive_ode.ml_methods import mlp_trajectory_candidate
             candidates.append(mlp_trajectory_candidate(seed=config.seed, max_iter=config.nn_max_iter))
-    return evaluate(t, observed, candidates, config=config, name="Observed time-series benchmark")
+    result = evaluate(t, observed, candidates, config=config, name="Observed time-series benchmark")
+    result.context = {"input_kind": "observations_with_equations" if rhs is not None else "observations",
+                      "equation_source": "Python RHS callback; retain its source." if rhs is not None else None}
+    return result

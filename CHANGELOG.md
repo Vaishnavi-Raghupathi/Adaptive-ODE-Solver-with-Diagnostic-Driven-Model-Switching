@@ -1,5 +1,22 @@
 # Changelog
 
+## Unreleased - dataset comparison platform
+
+- Independent-trajectory API and UI with explicit experiment roles, duplicate-content rejection and initial-state transfer.
+- Accuracy-constrained variant/method selection with explicit no-recommendation outcomes.
+- Repeated prediction timings, separate fit/prediction objectives and preset integrator tolerance/step sweeps.
+- Equal experiment weighting, frozen selection before test prediction, and conditional whole-test-trajectory bootstrap intervals.
+- Schema-3 exports, manifest CLI, a fourth runnable tutorial, extension documentation and contributor guidelines.
+
+- Dataset-first Streamlit workflow with an example and optional equations for uploaded observations.
+- Six numerical integrators compared against measured targets when an RHS is available.
+- Persistence, time-trend and learned linear ODE controls alongside existing data-driven candidates.
+- Optional training-normalized RMSE for validation-only method and variant selection.
+- Dataset profiling, baseline comparisons and descriptive accuracy/runtime Pareto sets.
+- Markdown recommendation reports, schema-2 result metadata and UI trajectory downloads.
+- Equation JSON files for the CLI, restricted parsing and explicit column-order checks.
+- Changed inputs hide previous UI recommendations; split isolation, unit scaling and packaged workflows are tested.
+
 ## 0.1.0 — initial library release candidate
 
 - Public `benchmark`, `benchmark_data`, `evaluate`, candidate/model protocol and structured result objects.

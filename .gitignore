@@ -9,6 +9,7 @@ coverage.xml
 build/
 *.egg-info/
 .venv-*/
+/runs/
 
 # Node / Vite artifacts
 node_modules/

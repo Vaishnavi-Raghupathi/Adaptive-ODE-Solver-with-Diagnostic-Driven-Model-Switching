@@ -1,6 +1,8 @@
 # Adaptive Solver Bench
 
-A Python toolkit for comparing numerical solvers, calibrated physics models, and learned corrections on dynamical systems. Fit on training observations, choose methods on validation error, and report future test performance separately.
+An open-source Python library and Streamlit platform for comparing numerical solvers and forecasting models on dynamical-system time series. Upload a CSV, optionally supply governing equations, compare tested methods, and export a recommendation with validation error, future test error, runtime and failures.
+
+Numerical integrators need equations. Without equations the platform compares forecasting models, including learned ODEs; it cannot identify the best numerical integrator from a CSV alone. Supply one finite numeric trajectory for chronological evaluation, or separate training/validation/test experiments for initial-state transfer. Do not concatenate independent experiments into one physical trajectory.
 
 **Status:** 0.1.0 alpha release candidate. Installable from this repository or a built wheel; not yet published on PyPI. This is a benchmarking and evaluation library, not a new universal solver or a guarantee that neural methods improve numerical integration.
 
@@ -33,7 +35,46 @@ For observations without supplied equations:
 ```python
 from adaptive_ode import benchmark_data
 
-result = benchmark_data(times, states)
+result = benchmark_data(times, states,
+                        config=BenchmarkConfig(selection_metric="normalized_rmse"))
+print(result.assessment)
+print(result.report())  # human-readable Markdown recommendation
+result.save("runs/my-data")
+```
+
+If you have equations, compare six numerical integrators against those same measured observations:
+
+```python
+def rhs(t, state):
+    position, velocity = state
+    return [velocity, -0.1 * velocity - 4 * position]
+
+result = benchmark_data(times, states, rhs=rhs,
+                        config=BenchmarkConfig(selection_metric="normalized_rmse"))
+```
+
+The recommendation is empirical: best among successful tested candidates on your validation interval. It is not a universal solver prediction. See the [dataset workflow](docs/dataset_workflow.md) for CSV requirements, equation files, scoring and limitations.
+
+## Independent experiments and accuracy requirements
+
+Choose **Independent trajectories** in the interface, or use the public API:
+
+```python
+from adaptive_ode import Trajectory, benchmark_trajectories
+
+config = BenchmarkConfig(selection_metric="normalized_rmse",
+                         selection_policy="fastest_within_target", accuracy_target=0.05,
+                         timing_repeats=3, solver_sweep=True)
+result = benchmark_trajectories(train=training_experiments, validation=validation_experiments,
+                                test=test_experiments, rhs=rhs, config=config)
+```
+
+Each experiment is a `Trajectory(times, states, "unique-experiment-name")`. Complete training experiments fit the model; different validation experiments choose the method and settings. Test experiments are predicted only after selection is frozen. Only each new experiment's initial state is supplied. No method satisfying the accuracy target yields **no recommendation**. Runtime selection can use repeated prediction time or fitting plus prediction; it never uses final test error.
+
+The [independent-experiment protocol](docs/independent_experiments.md) documents equal experiment weighting, initial-state transfer, tolerance/step sweeps, test-trajectory bootstrap intervals, manifests and limitations. Run the synthetic nine-experiment example:
+
+```bash
+python examples/04_independent_trajectories.py --output runs/independent-example
 ```
 
 Supply a `DynamicalSystem` for custom Python equations or `Candidate`/`FittedModel` callbacks for your own methods. See the [API reference](docs/api.md).
@@ -50,13 +91,17 @@ python -m streamlit run app.py
 
 The demo uses the same public API, with distinct validation and final-test metrics, editable plots, CSV/JSON downloads and visible failures. The original exploratory app is preserved as legacy_app.py with requirements-legacy.txt; it retains the [Day 1 audit limitations](docs/day01_audit.md).
 
+The platform opens in CSV mode, includes runnable single- and independent-experiment examples, and supports optional equations for measured data. It exports a Markdown recommendation, metrics, trajectories and evaluation metadata. Reports include baseline comparisons, all solver-setting trials, failure diagnostics and accuracy/runtime trade-offs. Changing benchmark inputs hides previous recommendations until a new run is completed.
+
+See the [deployment guide](docs/deployment.md) for hosting this Python app on Streamlit Community Cloud. The example oscillator is available immediately on first load; comparisons run when requested.
+
 ## What is implemented
 
 - Built-in Lorenz, Van der Pol, Robertson and misspecified oscillator examples, plus custom Python systems.
 - RK4, RK45, DOP853, BDF, Radau and LSODA integration; bounded parameter calibration for the oscillator.
-- Observations-only spline and polynomial learned-ODE baselines; optional neural trajectory models.
+- Observations-only persistence, linear trend, spline and linear/quadratic learned-ODE candidates; optional neural trajectory models.
 - Oscillator-specific state-based polynomial and neural acceleration corrections; supported fitted dynamics can transfer to new initial states without refitting.
-- Validation-tuned variants, separate fit/prediction/search costs, residual summaries, failure budgets and reproducible research artifacts.
+- Validation-tuned variants, optional training-normalized scoring, separate fit/prediction/search costs, residual summaries, failure budgets and reproducible research artifacts.
 
 The supported library API excludes the legacy PINN and PyTorch Neural ODE implementations, which have unresolved evaluation limitations. General dynamical-system identification and sparse SINDy are not claimed.
 
@@ -74,7 +119,7 @@ These are synthetic, fully observed, low-dimensional studies. The polynomial lib
 
 ## Tutorials, tests and build
 
-Three standalone examples cover known equations, missing physics with transfer, and observations-only data. See the [tutorial guide](docs/tutorials.md).
+Five standalone examples cover known equations, missing physics with transfer, observations-only data, independent synthetic experiments and [measured double-pendulum recordings](docs/experimental_pendulum.md). The measured-data pilot documents a no-recommendation result when the current models miss the validation target. See the [tutorial guide](docs/tutorials.md). Contributions and method adapters are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ```bash
 python -m pip install -e '.[research,demo,dev]'

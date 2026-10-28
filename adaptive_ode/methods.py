@@ -1,6 +1,6 @@
 """Public NumPy/SciPy candidates; ML candidates live in ml_methods."""
 
-from dataclasses import asdict
+from dataclasses import asdict, replace
 
 import numpy as np
 from scipy.interpolate import CubicSpline
@@ -11,27 +11,58 @@ from adaptive_ode.oscillator import OscillatorParameters, fit_parameters
 from adaptive_ode.numerics import integrate
 
 
-def integrated_model(rhs, t0, y0, *, details=None, method="DOP853", rtol=1e-7, atol=1e-9, max_nfev=50000):
+def integrated_model(rhs, t0, y0, *, details=None, method="DOP853", rtol=1e-7, atol=1e-9, max_nfev=50000, rk4_max_step=None):
     y0 = np.asarray(y0, dtype=float).copy()
 
     def predict(t):
         if t[0] != t0:
             raise ValueError("Prediction grid must start at the fitted model's initial time.")
-        return integrate(rhs, t, y0, method=method, rtol=rtol, atol=atol, max_nfev=max_nfev)
+        return integrate(rhs, t, y0, method=method, rtol=rtol, atol=atol, max_nfev=max_nfev, rk4_max_step=rk4_max_step)
 
     return FittedModel(
         predict, details or {},
-        lambda t, initial: integrate(rhs, t, initial, method=method, rtol=rtol, atol=atol, max_nfev=max_nfev),
+        lambda t, initial: integrate(rhs, t, initial, method=method, rtol=rtol, atol=atol, max_nfev=max_nfev, rk4_max_step=rk4_max_step),
     )
 
 
-def classical_candidate(rhs, method="DOP853", *, name=None, y0=None, rtol=1e-7, atol=1e-9, max_nfev=50000):
+def classical_candidate(rhs, method="DOP853", *, name=None, y0=None, rtol=1e-7, atol=1e-9, max_nfev=50000, rk4_max_step=None):
     """Numerical integration of supplied equations, without learning parameters."""
     def fit(t, y):
         return integrated_model(rhs, float(t[0]), y[0] if y0 is None else y0,
-                                details={"solver": method, "rtol": rtol, "atol": atol, "max_nfev": max_nfev},
-                                method=method, rtol=rtol, atol=atol, max_nfev=max_nfev)
-    return Candidate(name or method.lower(), "classical", fit)
+                                details={"solver": method, "rtol": rtol, "atol": atol, "max_nfev": max_nfev,
+                                         "rk4_max_step": rk4_max_step},
+                                method=method, rtol=rtol, atol=atol, max_nfev=max_nfev, rk4_max_step=rk4_max_step)
+    return Candidate(name or method.lower(), "classical", fit,
+                     fit_trajectories=lambda times, states: fit(times[0], states[0]))
+
+
+def classical_suite(rhs, *, max_nfev=50000, sweep=False, base_step=None, y0=None):
+    """Preset tolerances / fixed-step variants, grouped by integrator name."""
+    candidates = []
+    for method in ("RK4", "RK45", "DOP853", "BDF", "Radau", "LSODA"):
+        if not sweep:
+            candidates.append(classical_candidate(rhs, method, y0=y0, max_nfev=max_nfev))
+        elif method == "RK4":
+            for divisor in (1, 2, 4):
+                candidate = classical_candidate(rhs, method, y0=y0, max_nfev=max_nfev,
+                                                name=f"rk4_step_div{divisor}", rk4_max_step=base_step/divisor)
+                candidates.append(replace(candidate, group="rk4"))
+        else:
+            for rtol in (1e-3, 1e-5, 1e-7):
+                candidate = classical_candidate(rhs, method, y0=y0, max_nfev=max_nfev,
+                                                name=f"{method.lower()}_rtol{rtol:g}", rtol=rtol, atol=rtol*1e-2)
+                candidates.append(replace(candidate, group=method.lower()))
+    return candidates
+
+
+def initial_state_candidate():
+    """Independent-trajectory baseline that holds the supplied initial state."""
+    def fit(t, y):
+        transfer = lambda times, initial: np.repeat(initial[None, :], len(times), axis=0)
+        return FittedModel(lambda times: transfer(times, y[0]),
+                           {"baseline": "hold each supplied initial state"}, transfer)
+    return Candidate("initial_state", "forecast baseline", fit,
+                     fit_trajectories=lambda times, states: fit(times[0], states[0]))
 
 
 def oscillator_calibration_candidate(assumed=None, *, max_nfev=50000):
@@ -117,25 +148,62 @@ def spline_candidate():
     return Candidate("cubic_spline", "trajectory extrapolation", fit)
 
 
-def learned_polynomial_candidate(*, alpha=1e-5, max_nfev=50000):
-    """Fit a degree-two derivative model using finite differences (not sparse SINDy)."""
-    def features(y):
-        return np.concatenate([np.ones(y.shape[:-1] + (1,)), y,
-                               np.stack([y[..., i]*y[..., j] for i in range(y.shape[-1])
-                                         for j in range(i, y.shape[-1])], axis=-1)], axis=-1)
-
+def persistence_candidate():
+    """Forecast the last training observation; no future-state resets."""
     def fit(t, y):
-        if len(t) < 8:
+        last = y[-1].copy()
+        return FittedModel(lambda times: np.repeat(last[None, :], len(times), axis=0),
+                           {"baseline": "last training observation"})
+    return Candidate("persistence", "forecast baseline", fit)
+
+
+def linear_trend_candidate():
+    """Least-squares time trend fitted to the training block only."""
+    def fit(t, y):
+        origin, duration = float(t[0]), float(t[-1] - t[0])
+        def design(times):
+            return np.column_stack([np.ones(len(times)), (times-origin)/duration])
+        coefficients = np.linalg.lstsq(design(t), y, rcond=None)[0]
+        return FittedModel(lambda times: design(times) @ coefficients,
+                           {"baseline": "training least-squares time trend"})
+    return Candidate("linear_trend", "forecast baseline", fit)
+
+
+def learned_polynomial_candidate(*, degree=2, alpha=1e-5, max_nfev=50000):
+    """Fit a linear/quadratic derivative model from training finite differences."""
+    if isinstance(degree, bool) or degree not in (1, 2):
+        raise ValueError("degree must be 1 or 2.")
+    if not np.isfinite(alpha) or alpha < 0:
+        raise ValueError("alpha must be finite and nonnegative.")
+
+    def features(y):
+        columns = [np.ones(y.shape[:-1] + (1,)), y]
+        if degree == 2:
+            columns.append(np.stack([y[..., i]*y[..., j] for i in range(y.shape[-1])
+                                     for j in range(i, y.shape[-1])], axis=-1))
+        return np.concatenate(columns, axis=-1)
+
+    def fit_many(times, states):
+        if any(len(t) < 8 for t in times):
             raise ValueError("A learned polynomial ODE requires at least eight training points.")
-        derivative = np.gradient(y, t, axis=0)
-        design = features(y)
+        dimensions = states[0].shape[1]
+        feature_count = 1 + dimensions + (dimensions * (dimensions + 1) // 2 if degree == 2 else 0)
+        if feature_count > 256:
+            raise ValueError("Default learned ODE exceeds the 256-feature fitting budget; supply a reduced state or custom candidate.")
+        # Derivatives are formed WITHIN each trajectory, never across record boundaries.
+        blocks = [features(y) for y in states]
+        derivative = np.concatenate([np.gradient(y, t, axis=0) for t, y in zip(times, states)])
+        design = np.concatenate(blocks)
         scale = np.maximum(np.std(design, axis=0), 1e-8)
         scale[0] = 1
-        normalized = design / scale
+        weights = np.concatenate([np.full(len(y), np.sqrt(len(design)/(len(states)*len(y)))) for y in states])
+        normalized = design / scale * weights[:, None]
         augmented = np.vstack([normalized, np.sqrt(alpha) * np.eye(normalized.shape[1])])
-        target = np.vstack([derivative, np.zeros((normalized.shape[1], y.shape[1]))])
+        target = np.vstack([derivative * weights[:, None], np.zeros((normalized.shape[1], dimensions))])
         coefficients = np.linalg.lstsq(augmented, target, rcond=None)[0] / scale[:, None]
-        return integrated_model(lambda time, state: features(state) @ coefficients, float(t[0]), y[0],
-                                details={"degree": 2, "alpha": alpha, "derivative_source": "training finite differences"},
+        return integrated_model(lambda time, state: features(state) @ coefficients, float(times[0][0]), states[0][0],
+                                details={"degree": degree, "alpha": alpha, "derivative_source": "within-trajectory training finite differences",
+                                         "training_trajectories": len(states), "trajectory_weighting": "equal total weight"},
                                 max_nfev=max_nfev)
-    return Candidate("polynomial_learned_ode", "data-driven dynamics", fit)
+    return Candidate("polynomial_learned_ode" if degree == 2 else "linear_learned_ode", "data-driven dynamics",
+                     lambda t, y: fit_many([t], [y]), fit_trajectories=fit_many)

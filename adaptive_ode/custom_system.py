@@ -7,6 +7,7 @@ import numpy as np
 import sympy as sp
 
 from adaptive_ode.systems import DynamicalSystem
+from adaptive_ode.numerics import time_grid, trajectory
 
 
 ALLOWED_FUNCTIONS = {
@@ -177,4 +178,38 @@ def build_custom_system(
         labels=variables,
         rhs=rhs,
         reference_method=reference_method,
+    )
+
+
+def build_observed_system(spec, t, observed):
+    """Build equations for measured data from an explicit JSON-compatible spec.
+
+    Variables and derivatives must match the uploaded state-column order.
+    Only the first observation supplies the initial condition; the existing
+    restricted expression parser handles equations and numeric parameters.
+    """
+    if not isinstance(spec, dict):
+        raise ValueError("Equation specification must be a JSON object.")
+    if set(spec) - {"name", "variables", "parameters", "derivatives"}:
+        raise ValueError("Equation specification has unknown fields.")
+    t = time_grid(t)
+    observed = trajectory(observed, len(t))
+    variables, derivatives = spec.get("variables"), spec.get("derivatives")
+    parameters = spec.get("parameters", {})
+    if (not isinstance(variables, list) or len(variables) != observed.shape[1]
+            or any(not isinstance(value, str) for value in variables)):
+        raise ValueError("Provide one variable name per observed state, in column order.")
+    if (not isinstance(derivatives, list) or len(derivatives) != len(variables)
+            or any(not isinstance(value, str) for value in derivatives)):
+        raise ValueError("Provide one derivative expression per variable.")
+    if (not isinstance(parameters, dict)
+            or any(not isinstance(key, str) or type(value) not in (int, float, str)
+                   for key, value in parameters.items())):
+        raise ValueError("Parameters must map names to numeric values or arithmetic strings.")
+    if not isinstance(spec.get("name", "Uploaded equations"), str):
+        raise ValueError("Equation name must be a string.")
+    return build_custom_system(
+        spec.get("name", "Uploaded equations"), ",".join(variables),
+        ",".join(f"{key}={value}" for key, value in parameters.items()), "\n".join(derivatives),
+        ",".join(str(value) for value in observed[0]), float(t[0]), float(t[-1]),
     )
